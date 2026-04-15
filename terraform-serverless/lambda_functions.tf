@@ -133,6 +133,18 @@ resource "aws_api_gateway_integration" "frontend_integration" {
   uri                    = aws_lambda_function.frontend.invoke_arn
 }
 
+# Method response for frontend
+resource "aws_api_gateway_method_response" "frontend_method_response" {
+  rest_api_id = aws_api_gateway_rest_api.fed_communications_api.id
+  resource_id = aws_api_gateway_rest_api.fed_communications_api.root_resource_id
+  http_method = aws_api_gateway_method.frontend_method.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
+}
+
 # GET /api/inquiries - List all inquiries
 resource "aws_api_gateway_method" "get_inquiries" {
   rest_api_id   = aws_api_gateway_rest_api.fed_communications_api.id
@@ -290,6 +302,7 @@ resource "aws_api_gateway_deployment" "fed_communications_deployment" {
   depends_on = [
     aws_api_gateway_method.frontend_method,
     aws_api_gateway_integration.frontend_integration,
+    aws_api_gateway_method_response.frontend_method_response,
     aws_api_gateway_method.get_inquiries,
     aws_api_gateway_integration.get_inquiries_integration,
     aws_api_gateway_method.post_inquiries,
