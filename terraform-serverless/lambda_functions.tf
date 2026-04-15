@@ -47,7 +47,6 @@ resource "aws_lambda_function" "backend" {
       DYNAMODB_INQUIRIES_TABLE = aws_dynamodb_table.inquiries.name
       DYNAMODB_TEMPLATES_TABLE = aws_dynamodb_table.response_templates.name
       DYNAMODB_ANALYTICS_TABLE = aws_dynamodb_table.analytics.name
-      AWS_REGION              = var.aws_region
       ENVIRONMENT             = var.environment
     }
   }
