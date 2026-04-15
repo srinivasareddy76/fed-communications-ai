@@ -738,10 +738,12 @@ const threePanelApp = `
                 const data = await response.json();
                 console.log('API Response:', data);
                 inquiries = data.inquiries || data; // Handle both formats
-                console.log('Inquiries loaded:', inquiries.length);
+                console.log('Inquiries loaded:', inquiries ? inquiries.length : 'null');
+                console.log('First inquiry:', inquiries ? inquiries[0] : 'none');
                 
                 // If no inquiries from API, use sample Federal Reserve inquiries
                 if (!inquiries || inquiries.length === 0) {
+                    console.log('Using sample inquiries');
                     inquiries = getSampleInquiries();
                 }
                 
@@ -819,7 +821,7 @@ const threePanelApp = `
                 <div class="inquiry-card \${selectedInquiry === index ? 'selected' : ''}" onclick="selectInquiry(\${index})">
                     <div class="inquiry-meta">
                         <div class="inquiry-subject">\${inquiry.subject || 'No Subject'}</div>
-                        <div class="inquiry-time">\${new Date(inquiry.timestamp).toLocaleTimeString()}</div>
+                        <div class="inquiry-time">\${new Date(inquiry.date || inquiry.timestamp).toLocaleTimeString()}</div>
                     </div>
                     <div class="inquiry-content">\${(inquiry.body || inquiry.content || '').substring(0, 100)}...</div>
                     <div class="inquiry-tags">

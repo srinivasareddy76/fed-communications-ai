@@ -47,7 +47,61 @@ try {
   newsArticles = JSON.parse(fs.readFileSync(path.join(__dirname, '../../news_articles_20260413_195640.json'), 'utf8'));
   responseTemplates = JSON.parse(fs.readFileSync(path.join(__dirname, '../../response_templates_20260413_195738.json'), 'utf8'));
 } catch (error) {
-  console.log('Sample data files not found, using empty arrays');
+  console.log('Sample data files not found, using Federal Reserve sample data');
+  
+  // Sample Federal Reserve inquiries
+  inquiries = [
+    {
+      id: 1,
+      subject: 'Request for Current Interest Rate Policy Statement',
+      sender: 'financial.reporter@wsj.com',
+      date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      content: 'Dear Federal Reserve Communications Team, I am writing to request the most recent policy statement regarding the current federal funds rate. Could you please provide information about the rationale behind the current 5.25-5.50% rate range and any anticipated changes in the upcoming FOMC meetings?',
+      priority: 'high',
+      category: 'Media Inquiry',
+      status: 'pending'
+    },
+    {
+      id: 2,
+      subject: 'Congressional Request: Inflation Data and Projections',
+      sender: 'staff@banking.house.gov',
+      date: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+      content: 'The House Committee on Financial Services requests detailed information on current inflation metrics, including Core PCE data, and the Fed\'s projections for the next 12 months. This information is needed for upcoming hearings on monetary policy effectiveness.',
+      priority: 'high',
+      category: 'Congressional',
+      status: 'pending'
+    },
+    {
+      id: 3,
+      subject: 'Academic Research: Employment Data Access',
+      sender: 'research@economics.stanford.edu',
+      date: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+      content: 'Hello, I am conducting research on the relationship between Federal Reserve policy and employment outcomes. Could you provide access to historical employment data used in FOMC decision-making processes? This is for academic publication purposes.',
+      priority: 'medium',
+      category: 'Academic',
+      status: 'pending'
+    },
+    {
+      id: 4,
+      subject: 'Public Information Request: Banking Supervision Guidelines',
+      sender: 'citizen.inquiry@gmail.com',
+      date: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+      content: 'As a concerned citizen, I would like to understand the Federal Reserve\'s current banking supervision guidelines, particularly regarding stress testing requirements for regional banks. Could you provide publicly available documentation on this topic?',
+      priority: 'low',
+      category: 'Public Inquiry',
+      status: 'pending'
+    },
+    {
+      id: 5,
+      subject: 'Market Analysis Request: Fed Communication Impact',
+      sender: 'analyst@goldmansachs.com',
+      date: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+      content: 'We are analyzing the market impact of Federal Reserve communications. Could you provide information about the timing and methodology of public communications, particularly regarding forward guidance on monetary policy?',
+      priority: 'medium',
+      category: 'Financial Institution',
+      status: 'pending'
+    }
+  ];
 }
 
 // AI Mock Services
