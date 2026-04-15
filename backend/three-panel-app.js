@@ -637,7 +637,7 @@ const threePanelApp = `
             });
             const clockElement = document.getElementById('liveClock');
             if (clockElement) {
-                clockElement.textContent = `SF Time: ${timeString}`;
+                clockElement.textContent = 'SF Time: ' + timeString;
             }
         }
 
