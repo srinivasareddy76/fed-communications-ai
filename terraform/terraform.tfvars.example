@@ -1,0 +1,32 @@
+
+
+# Fed Communications AI - Terraform Variables Example
+# Copy this file to terraform.tfvars and customize the values
+
+# AWS Configuration
+aws_region = "us-west-2"
+
+# Project Configuration
+project_name = "fed-comms-ai"
+environment  = "production"
+
+# Network Configuration
+vpc_cidr             = "10.0.0.0/16"
+public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+private_subnet_cidrs = ["10.0.10.0/24", "10.0.20.0/24"]
+
+# EC2 Configuration
+instance_type = "t3.medium"
+key_pair_name = "your-key-pair-name"  # REQUIRED: Create this in AWS EC2 console first
+ssh_cidr      = "0.0.0.0/0"          # SECURITY: Restrict to your IP for production
+
+# Auto Scaling Configuration
+min_size         = 1
+max_size         = 3
+desired_capacity = 2
+
+# Optional: Domain and SSL Configuration
+# domain_name     = "fed-comms-ai.yourdomain.com"
+# certificate_arn = "arn:aws:acm:us-west-2:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+
+
