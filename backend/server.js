@@ -19,7 +19,7 @@ const io = socketIo(server, {
   }
 });
 
-const PORT = process.env.PORT || 54989;
+const PORT = process.env.PORT || 53788;
 
 // Middleware
 app.use(helmet());
@@ -569,9 +569,15 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Fed Communications AI Server running on port ${PORT}`);
-  console.log(`📊 Dashboard: http://localhost:${PORT}/api/dashboard/analytics`);
-});
+// For Lambda deployment, we don't call listen()
+// The serverless-http wrapper handles this
+
+// Only start server if running locally (not in Lambda)
+if (process.env.NODE_ENV !== 'production' && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Fed Communications AI Server running on port ${PORT}`);
+    console.log(`📊 Dashboard: http://localhost:${PORT}/api/dashboard/analytics`);
+  });
+}
 
 module.exports = app;
