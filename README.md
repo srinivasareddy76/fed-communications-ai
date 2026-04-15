@@ -1,24 +1,26 @@
 # Fed Communications AI System
 
-🏛️ **AI-Powered Communication Management System for Federal Reserve Bank of San Francisco**
+🏛️ **Serverless AI-Powered Communication Management System for Federal Reserve Bank of San Francisco**
 
-A comprehensive hackathon solution that streamlines communication workflows through intelligent analysis, automated categorization, and AI-powered response generation.
+A comprehensive AWS Lambda-based solution that streamlines communication workflows through intelligent analysis, automated categorization, and AI-powered response generation.
 
 ## 🎯 Project Overview
 
-This system addresses the Federal Reserve Bank of San Francisco's External Communication department needs by providing:
+This serverless system addresses the Federal Reserve Bank of San Francisco's External Communication department needs by providing:
 
 - **Automated Communication Analysis**: AI-powered categorization and sentiment analysis
 - **Intelligent Response Generation**: Context-aware draft responses using templates
 - **Real-time Risk Detection**: Monitoring and alerting for high-risk communications
 - **Comprehensive Analytics**: Sentiment trends, topic analysis, and insights reporting
 - **Three-Panel UX Design**: Streamlined interface for maximum efficiency
+- **Serverless Architecture**: 99% cost reduction with AWS Lambda deployment
 
-## 🏗️ Architecture
+## 🏗️ Serverless Architecture
 
-### Backend (Node.js/Express)
-- **API Server**: RESTful endpoints with real-time Socket.IO integration
-- **AI Services**: Mock implementations for sentiment analysis, categorization, and risk detection
+### Backend (AWS Lambda + Node.js/Express)
+- **Lambda Functions**: Serverless API endpoints with auto-scaling
+- **API Gateway**: RESTful endpoints with HTTPS termination
+- **AI Services**: Sentiment analysis, categorization, and risk detection
 - **Data Processing**: Real-time analysis of inquiries, social media, and news
 - **Template Engine**: Dynamic response generation based on inquiry context
 
@@ -27,33 +29,53 @@ This system addresses the Federal Reserve Bank of San Francisco's External Commu
   - Left: Inquiry Viewer with auto-extracted metadata
   - Right: AI Draft Response editor
   - Bottom: Insights Dashboard with analytics
-- **Real-time Updates**: Live data refresh and notifications
+- **Real-time Updates**: Polling-based data refresh (Lambda-optimized)
 - **Mobile Responsive**: Optimized for all device sizes
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 16+ 
-- npm or yarn
+- AWS CLI configured
+- Serverless Framework
 
-### Installation & Setup
+### Local Development
 
 1. **Clone and Install**
    ```bash
-   cd fed-comms-ai
+   git clone https://github.com/srinivasareddy76/fed-communications-ai.git
+   cd fed-communications-ai
    npm install
    ```
 
-2. **Start Backend Server**
+2. **Start Local Development Server**
    ```bash
-   cd backend
-   node server.js
+   npm run dev  # Serverless offline
    ```
 
 3. **Access Application**
-   - Main Interface: http://localhost:54989/
-   - Analytics Dashboard: http://localhost:54989/dashboard
-   - API Health Check: http://localhost:54989/api/health
+   - Main Interface: http://localhost:3000/prod/
+   - API Health Check: http://localhost:3000/prod/api/health
+
+### AWS Lambda Deployment
+
+1. **Configure AWS Credentials**
+   ```bash
+   aws configure
+   ```
+
+2. **Deploy to AWS Lambda**
+   ```bash
+   # Windows
+   deploy-lambda.bat
+   
+   # Linux/Mac
+   ./deploy-lambda.sh
+   ```
+
+3. **Access Live Application**
+   - Your API Gateway URL will be provided after deployment
+   - Example: https://abc123xyz.execute-api.us-west-2.amazonaws.com/prod/
 
 ## 📋 Features
 
