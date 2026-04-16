@@ -1144,9 +1144,11 @@ const html = `
 
         // Update sentiment display
         function updateSentimentDisplay(data) {
-            const positive = Math.round(data.positive * 100);
-            const neutral = Math.round(data.neutral * 100);
-            const negative = Math.round(data.negative * 100);
+            // Handle both direct format and nested format
+            const sentimentData = data.overall || data;
+            const positive = Math.round(sentimentData.positive * 100);
+            const neutral = Math.round(sentimentData.neutral * 100);
+            const negative = Math.round(sentimentData.negative * 100);
 
             document.getElementById('positiveBar').style.width = positive + '%';
             document.getElementById('neutralBar').style.width = neutral + '%';
@@ -1190,7 +1192,7 @@ const html = `
                         <strong>\${topic.topic}</strong>
                         <div style="font-size: 0.8rem; opacity: 0.8;">\${topic.mentions} mentions</div>
                     </div>
-                    <div class="trend-score">\${topic.trend_score}</div>
+                    <div class="trend-score">\${topic.trend}</div>
                 </div>
             \`).join('');
         }

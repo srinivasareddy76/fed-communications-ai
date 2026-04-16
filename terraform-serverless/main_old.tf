@@ -1,7 +1,7 @@
 
 
-# Federal Reserve Communications AI - Serverless Terraform Infrastructure (S3-based)
-# Uses S3 for data storage instead of DynamoDB
+# Federal Reserve Communications AI - Serverless Terraform Infrastructure
+# Based on the tennis coach serverless architecture
 
 terraform {
   required_version = ">= 1.0"
@@ -49,6 +49,185 @@ resource "random_string" "suffix" {
   length  = 8
   special = false
   upper   = false
+}
+
+# DynamoDB table for storing inquiries
+resource "aws_dynamodb_table" "inquiries" {
+  name           = "${var.project_name}-inquiries-${var.environment}"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "inquiry_id"
+
+  attribute {
+    name = "inquiry_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "category"
+    type = "S"
+  }
+
+  attribute {
+    name = "priority"
+    type = "S"
+  }
+
+  attribute {
+    name = "date_created"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name               = "category-index"
+    hash_key           = "category"
+    projection_type    = "ALL"
+  }
+
+  global_secondary_index {
+    name               = "priority-index"
+    hash_key           = "priority"
+    projection_type    = "ALL"
+  }
+
+  global_secondary_index {
+    name               = "date-index"
+    hash_key           = "date_created"
+    projection_type    = "ALL"
+  }
+
+  tags = {
+    Name        = "Fed Communications Inquiries"
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}
+
+# DynamoDB table for response templates
+resource "aws_dynamodb_table" "response_templates" {
+  name           = "${var.project_name}-templates-${var.environment}"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "template_id"
+
+  attribute {
+    name = "template_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "category"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name               = "category-template-index"
+    hash_key           = "category"
+    projection_type    = "ALL"
+  }
+
+  tags = {
+    Name        = "Fed Communications Templates"
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}
+
+# DynamoDB table for analytics data
+resource "aws_dynamodb_table" "analytics" {
+  name           = "${var.project_name}-analytics-${var.environment}"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "metric_id"
+
+  attribute {
+    name = "metric_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "metric_type"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name               = "metric-type-index"
+    hash_key           = "metric_type"
+    projection_type    = "ALL"
+  }
+
+  tags = {
+    Name        = "Fed Communications Analytics"
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}
+
+# DynamoDB table for sentiment analysis results
+resource "aws_dynamodb_table" "sentiment_analysis" {
+  name           = "${var.project_name}-sentiment-${var.environment}"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "analysis_id"
+
+  attribute {
+    name = "analysis_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "date"
+    type = "S"
+  }
+
+  attribute {
+    name = "source"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name               = "date-source-index"
+    hash_key           = "date"
+    range_key          = "source"
+    projection_type    = "ALL"
+  }
+
+  tags = {
+    Name        = "Fed Communications Sentiment"
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}
+
+# DynamoDB table for trending topics and risk indicators
+resource "aws_dynamodb_table" "trending_topics" {
+  name           = "${var.project_name}-trending-${var.environment}"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "topic_id"
+
+  attribute {
+    name = "topic_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "date"
+    type = "S"
+  }
+
+  attribute {
+    name = "trend_score"
+    type = "N"
+  }
+
+  global_secondary_index {
+    name               = "trending-index"
+    hash_key           = "date"
+    range_key          = "trend_score"
+    projection_type    = "ALL"
+  }
+
+  tags = {
+    Name        = "Fed Communications Trending Topics"
+    Environment = var.environment
+    Project     = var.project_name
+  }
 }
 
 # S3 bucket for storing synthetic data files
@@ -261,127 +440,72 @@ resource "aws_api_gateway_rest_api" "fed_communications_api" {
   }
 }
 
-# API Gateway deployment
-resource "aws_api_gateway_deployment" "fed_communications_deployment" {
-  depends_on = [
-    aws_api_gateway_integration.frontend_integration,
-    aws_api_gateway_integration.backend_integration
-  ]
-
-  rest_api_id = aws_api_gateway_rest_api.fed_communications_api.id
-  stage_name  = var.environment
-
-  # Force redeployment on changes
-  triggers = {
-    redeployment = sha1(jsonencode([
-      aws_api_gateway_resource.api_resource.id,
-      aws_api_gateway_resource.proxy_resource.id,
-      aws_api_gateway_method.frontend_method.id,
-      aws_api_gateway_method.backend_method.id,
-      aws_api_gateway_integration.frontend_integration.id,
-      aws_api_gateway_integration.backend_integration.id,
-    ]))
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-# API Gateway resources and methods
-resource "aws_api_gateway_resource" "api_resource" {
-  rest_api_id = aws_api_gateway_rest_api.fed_communications_api.id
-  parent_id   = aws_api_gateway_rest_api.fed_communications_api.root_resource_id
-  path_part   = "api"
-}
-
-resource "aws_api_gateway_resource" "proxy_resource" {
-  rest_api_id = aws_api_gateway_rest_api.fed_communications_api.id
-  parent_id   = aws_api_gateway_resource.api_resource.id
-  path_part   = "{proxy+}"
-}
-
-# Frontend method (root)
-resource "aws_api_gateway_method" "frontend_method" {
+# API Gateway CORS configuration for root
+resource "aws_api_gateway_method" "options_method" {
   rest_api_id   = aws_api_gateway_rest_api.fed_communications_api.id
   resource_id   = aws_api_gateway_rest_api.fed_communications_api.root_resource_id
-  http_method   = "ANY"
+  http_method   = "OPTIONS"
   authorization = "NONE"
 }
 
-# Backend method (API routes)
-resource "aws_api_gateway_method" "backend_method" {
-  rest_api_id   = aws_api_gateway_rest_api.fed_communications_api.id
-  resource_id   = aws_api_gateway_resource.proxy_resource.id
-  http_method   = "ANY"
-  authorization = "NONE"
-
-  request_parameters = {
-    "method.request.path.proxy" = true
-  }
-}
-
-# Frontend integration
-resource "aws_api_gateway_integration" "frontend_integration" {
+resource "aws_api_gateway_integration" "options_integration" {
   rest_api_id = aws_api_gateway_rest_api.fed_communications_api.id
   resource_id = aws_api_gateway_rest_api.fed_communications_api.root_resource_id
-  http_method = aws_api_gateway_method.frontend_method.http_method
+  http_method = aws_api_gateway_method.options_method.http_method
+  type        = "MOCK"
 
-  integration_http_method = "POST"
-  type                   = "AWS_PROXY"
-  uri                    = aws_lambda_function.frontend.invoke_arn
-}
-
-# Backend integration
-resource "aws_api_gateway_integration" "backend_integration" {
-  rest_api_id = aws_api_gateway_rest_api.fed_communications_api.id
-  resource_id = aws_api_gateway_resource.proxy_resource.id
-  http_method = aws_api_gateway_method.backend_method.http_method
-
-  integration_http_method = "POST"
-  type                   = "AWS_PROXY"
-  uri                    = aws_lambda_function.backend.invoke_arn
-
-  request_parameters = {
-    "integration.request.path.proxy" = "method.request.path.proxy"
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
   }
 }
 
-# Lambda permissions for API Gateway
-resource "aws_lambda_permission" "frontend_permission" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.frontend.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.fed_communications_api.execution_arn}/*/*"
+resource "aws_api_gateway_method_response" "options_response" {
+  rest_api_id = aws_api_gateway_rest_api.fed_communications_api.id
+  resource_id = aws_api_gateway_rest_api.fed_communications_api.root_resource_id
+  http_method = aws_api_gateway_method.options_method.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
 }
 
-resource "aws_lambda_permission" "backend_permission" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.backend.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.fed_communications_api.execution_arn}/*/*"
+resource "aws_api_gateway_integration_response" "options_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.fed_communications_api.id
+  resource_id = aws_api_gateway_rest_api.fed_communications_api.root_resource_id
+  http_method = aws_api_gateway_method.options_method.http_method
+  status_code = aws_api_gateway_method_response.options_response.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
 }
 
-# Outputs
-output "api_gateway_url" {
-  description = "URL of the API Gateway"
-  value       = "https://${aws_api_gateway_rest_api.fed_communications_api.id}.execute-api.${var.aws_region}.amazonaws.com/${var.environment}"
+# CloudWatch Log Groups
+resource "aws_cloudwatch_log_group" "frontend_logs" {
+  name              = "/aws/lambda/${var.project_name}-frontend-${var.environment}"
+  retention_in_days = 7
+
+  tags = {
+    Name        = "Fed Communications Frontend Logs"
+    Environment = var.environment
+    Project     = var.project_name
+  }
 }
 
-output "s3_bucket_name" {
-  description = "Name of the S3 bucket storing synthetic data"
-  value       = aws_s3_bucket.synthetic_data.bucket
+resource "aws_cloudwatch_log_group" "backend_logs" {
+  name              = "/aws/lambda/${var.project_name}-backend-${var.environment}"
+  retention_in_days = 7
+
+  tags = {
+    Name        = "Fed Communications Backend Logs"
+    Environment = var.environment
+    Project     = var.project_name
+  }
 }
 
-output "lambda_backend_function_name" {
-  description = "Name of the backend Lambda function"
-  value       = aws_lambda_function.backend.function_name
-}
-
-output "lambda_frontend_function_name" {
-  description = "Name of the frontend Lambda function"
-  value       = aws_lambda_function.frontend.function_name
-}
 
