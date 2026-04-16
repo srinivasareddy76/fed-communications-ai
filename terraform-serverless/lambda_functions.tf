@@ -12,6 +12,7 @@ resource "aws_lambda_function" "frontend" {
   runtime         = "nodejs18.x"
   timeout         = 30
   memory_size     = 512
+  source_code_hash = data.archive_file.frontend_zip.output_base64sha256
 
   depends_on = [data.archive_file.frontend_zip]
 
@@ -39,6 +40,7 @@ resource "aws_lambda_function" "backend" {
   runtime         = "nodejs18.x"
   timeout         = 30
   memory_size     = 512
+  source_code_hash = data.archive_file.backend_zip.output_base64sha256
 
   depends_on = [data.archive_file.backend_zip]
 
