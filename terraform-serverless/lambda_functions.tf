@@ -18,9 +18,10 @@ resource "aws_lambda_function" "frontend" {
 
   environment {
     variables = {
-      API_GATEWAY_URL = aws_api_gateway_rest_api.fed_communications_api.execution_arn
-      ENVIRONMENT     = var.environment
-      PROJECT_NAME    = var.project_name
+      API_GATEWAY_URL          = aws_api_gateway_rest_api.fed_communications_api.execution_arn
+      S3_SYNTHETIC_DATA_BUCKET = aws_s3_bucket.synthetic_data.bucket
+      ENVIRONMENT              = var.environment
+      PROJECT_NAME             = var.project_name
     }
   }
 

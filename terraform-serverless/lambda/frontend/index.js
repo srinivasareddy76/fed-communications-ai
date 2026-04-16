@@ -976,12 +976,25 @@ const html = `
             document.getElementById('liveClock').textContent = \`\${dateString} \${timeString}\`;
         }
 
-        // Load inquiries from API
+        // API Configuration - Use Lambda backend endpoints
+        const API_BASE_URL = window.location.origin;
+        
+        // Load inquiries from Lambda backend
         async function loadInquiries() {
             try {
-                const response = await fetch('/api/inquiries');
+                const response = await fetch(`${API_BASE_URL}/v1/inquiries`);
                 const data = await response.json();
                 inquiries = Array.isArray(data) ? data : (data.inquiries || []);
+                
+                // Transform data to match expected format if needed
+                inquiries = inquiries.map(inq => ({
+                    ...inq,
+                    body: inq.content || inq.body,
+                    sender_name: inq.sender || inq.sender_name || 'Unknown',
+                    sender_organization: inq.sender_organization || 'N/A',
+                    channel: inq.channel || inq.source || 'email'
+                }));
+                
                 renderInquiries();
             } catch (error) {
                 console.error('Error loading inquiries:', error);
@@ -1076,10 +1089,10 @@ const html = `
             }
         }
 
-        // Load dashboard data
+        // Load dashboard data from Lambda backend
         async function loadDashboardData() {
             try {
-                const response = await fetch('/api/dashboard/analytics');
+                const response = await fetch(`${API_BASE_URL}/v1/dashboard/analytics`);
                 dashboardData = await response.json();
                 renderDashboard();
             } catch (error) {
@@ -1273,10 +1286,10 @@ const html = `
             });
         }
 
-        // Load sentiment data
+        // Load sentiment data from Lambda backend
         async function loadSentimentData() {
             try {
-                const response = await fetch('/api/sentiment/overview');
+                const response = await fetch(`${API_BASE_URL}/v1/sentiment/overview`);
                 const data = await response.json();
                 updateSentimentDisplay(data);
             } catch (error) {
@@ -1306,10 +1319,10 @@ const html = `
             }
         }
 
-        // Load trending topics
+        // Load trending topics from Lambda backend
         async function loadTrendingTopics() {
             try {
-                const response = await fetch('/api/trending/topics');
+                const response = await fetch(`${API_BASE_URL}/v1/trending/topics`);
                 const topics = await response.json();
                 renderTrendingTopics(topics);
             } catch (error) {
@@ -1339,10 +1352,10 @@ const html = `
             \`).join('');
         }
 
-        // Load AI insights
+        // Load AI insights from Lambda backend
         async function loadAIInsights() {
             try {
-                const response = await fetch('/api/ai/insights');
+                const response = await fetch(`${API_BASE_URL}/v1/ai/insights`);
                 const data = await response.json();
                 renderAIInsights(data.insights || []);
             } catch (error) {
@@ -1522,7 +1535,10 @@ exports.handler = async (event, context) => {
         statusCode: 200,
         headers: {
             'Content-Type': 'text/html',
-            'Cache-Control': 'no-cache'
+            'Cache-Control': 'no-cache',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+            'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS'
         },
         body: html
     };

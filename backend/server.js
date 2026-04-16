@@ -42,10 +42,9 @@ let responseTemplates = [];
 
 // Load data from JSON files
 try {
-  inquiries = JSON.parse(fs.readFileSync(path.join(__dirname, '../../inquiries_20260413_193512.json'), 'utf8'));
-  socialMedia = JSON.parse(fs.readFileSync(path.join(__dirname, '../../social_media_20260413_193722.json'), 'utf8'));
-  newsArticles = JSON.parse(fs.readFileSync(path.join(__dirname, '../../news_articles_20260413_195640.json'), 'utf8'));
-  responseTemplates = JSON.parse(fs.readFileSync(path.join(__dirname, '../../response_templates_20260413_195738.json'), 'utf8'));
+  inquiries = JSON.parse(fs.readFileSync(path.join(__dirname, '../sample_data/communications.json'), 'utf8'));
+  responseTemplates = JSON.parse(fs.readFileSync(path.join(__dirname, '../sample_data/response_templates.json'), 'utf8'));
+  console.log('✅ Loaded sample data from JSON files');
 } catch (error) {
   console.log('Sample data files not found, using Federal Reserve sample data');
   
@@ -243,8 +242,17 @@ app.get('/api/inquiries', (req, res) => {
   const startIndex = (page - 1) * limit;
   const paginatedResults = filtered.slice(startIndex, startIndex + parseInt(limit));
   
+  // Transform data to match frontend expectations
+  const transformedResults = paginatedResults.map(inq => ({
+    ...inq,
+    body: inq.content || inq.body, // Map content to body
+    sender_name: inq.sender || inq.sender_name || 'Unknown',
+    sender_organization: inq.sender_organization || 'N/A',
+    channel: inq.channel || inq.source || 'email'
+  }));
+  
   res.json({
-    inquiries: paginatedResults,
+    inquiries: transformedResults,
     total: filtered.length,
     page: parseInt(page),
     totalPages: Math.ceil(filtered.length / limit)
