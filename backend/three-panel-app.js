@@ -579,7 +579,42 @@ const threePanelApp = `
                 Inquiry Viewer
             </div>
             <div id="inquiries-list">
-                <!-- Inquiries will be loaded here -->
+                <div class="inquiry-card" onclick="selectInquiry(0)">
+                    <div class="inquiry-meta">
+                        <div class="inquiry-subject">Federal Reserve Interest Rate Policy Inquiry</div>
+                        <div class="inquiry-time">2:30 PM</div>
+                    </div>
+                    <div class="inquiry-content">Request for information regarding the Federal Reserve's current monetary policy stance and future rate projections...</div>
+                    <div class="inquiry-tags">
+                        <span class="tag category">Monetary Policy</span>
+                        <span class="tag sentiment">high Priority</span>
+                        <span class="tag risk">Congressional</span>
+                    </div>
+                </div>
+                <div class="inquiry-card" onclick="selectInquiry(1)">
+                    <div class="inquiry-meta">
+                        <div class="inquiry-subject">Inflation Data Request</div>
+                        <div class="inquiry-time">1:45 PM</div>
+                    </div>
+                    <div class="inquiry-content">Media inquiry requesting latest inflation metrics and Federal Reserve's assessment of price stability...</div>
+                    <div class="inquiry-tags">
+                        <span class="tag category">Economic Data</span>
+                        <span class="tag sentiment">medium Priority</span>
+                        <span class="tag risk">Media</span>
+                    </div>
+                </div>
+                <div class="inquiry-card" onclick="selectInquiry(2)">
+                    <div class="inquiry-meta">
+                        <div class="inquiry-subject">Banking Supervision Guidelines</div>
+                        <div class="inquiry-time">12:15 PM</div>
+                    </div>
+                    <div class="inquiry-content">Request for clarification on recent banking supervision guidelines and regulatory compliance requirements...</div>
+                    <div class="inquiry-tags">
+                        <span class="tag category">Banking</span>
+                        <span class="tag sentiment">medium Priority</span>
+                        <span class="tag risk">Financial Institution</span>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -707,6 +742,14 @@ const threePanelApp = `
     </div>
     
     <script>
+        // Test if JavaScript is working
+        document.addEventListener('DOMContentLoaded', function() {
+            const testDiv = document.getElementById('inquiries-list');
+            if (testDiv) {
+                testDiv.innerHTML = '<div style="padding: 1rem; color: #059669; font-weight: bold;">✅ JavaScript DOM manipulation working!</div>';
+            }
+        });
+        
         let selectedInquiry = null;
         let inquiries = [];
 
@@ -733,24 +776,58 @@ const threePanelApp = `
         // Load inquiries
         async function loadInquiries() {
             try {
-                console.log('Loading inquiries...');
-                const response = await fetch('/api/inquiries');
-                const data = await response.json();
-                console.log('API Response:', data);
-                inquiries = data.inquiries || data; // Handle both formats
-                console.log('Inquiries loaded:', inquiries ? inquiries.length : 'null');
-                console.log('First inquiry:', inquiries ? inquiries[0] : 'none');
+                console.log('Loading inquiries from S3 via Lambda backend...');
                 
-                // If no inquiries from API, use sample Federal Reserve inquiries
+                // Try to load from S3-based Lambda backend first
+                const response = await fetch('/api/inquiries');
+                console.log('Response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('S3 API Response:', data);
+                    
+                    // Handle different response formats from S3/Lambda
+                    if (data.inquiries && Array.isArray(data.inquiries)) {
+                        inquiries = data.inquiries;
+                    } else if (Array.isArray(data)) {
+                        inquiries = data;
+                    } else if (data.communications && Array.isArray(data.communications)) {
+                        // Transform S3 communications.json format to frontend format
+                        inquiries = data.communications.map(comm => ({
+                            id: comm.id,
+                            subject: comm.subject,
+                            sender: comm.sender,
+                            date_created: comm.timestamp,
+                            body: comm.content,
+                            category: comm.category,
+                            priority: comm.priority,
+                            source: comm.source,
+                            sentiment: comm.sentiment,
+                            status: comm.status
+                        }));
+                    } else {
+                        throw new Error('Unexpected S3 data format');
+                    }
+                    
+                    console.log('S3 Inquiries loaded:', inquiries ? inquiries.length : 'null');
+                    console.log('First S3 inquiry:', inquiries ? inquiries[0] : 'none');
+                } else {
+                    throw new Error('S3 API request failed with status: ' + response.status);
+                }
+                
+                // Fallback to sample data if S3 data is empty
                 if (!inquiries || inquiries.length === 0) {
-                    console.log('Using sample inquiries');
+                    console.log('S3 data empty, using sample Federal Reserve inquiries');
                     inquiries = getSampleInquiries();
                 }
                 
+                console.log('About to render inquiries, count:', inquiries.length);
                 renderInquiries();
+                console.log('Finished rendering inquiries');
             } catch (error) {
-                console.error('Error loading inquiries:', error);
-                // Show sample Federal Reserve data if API fails
+                console.error('Error loading inquiries from S3:', error);
+                // Show sample Federal Reserve data if S3/Lambda fails
+                console.log('Using sample inquiries due to S3 error');
                 inquiries = getSampleInquiries();
                 renderInquiries();
             }
@@ -809,28 +886,49 @@ const threePanelApp = `
         
         // Render inquiries list
         function renderInquiries() {
-            console.log('Rendering inquiries:', inquiries.length);
+            console.log('Rendering inquiries:', inquiries ? inquiries.length : 'inquiries is null');
             const container = document.getElementById('inquiries-list');
+            console.log('Container found:', container ? 'yes' : 'no');
+            
+            if (!container) {
+                console.error('inquiries-list container not found!');
+                return;
+            }
+            
+            // Force show a test message first
+            container.innerHTML = '<div style="padding: 1rem; color: #059669; font-weight: bold;">✅ Inquiry Viewer is working! Loading data...</div>';
             
             if (!inquiries || inquiries.length === 0) {
                 container.innerHTML = '<div style="padding: 1rem; color: #6b7280;">No inquiries found.</div>';
                 return;
             }
             
-            container.innerHTML = inquiries.map((inquiry, index) => \`
-                <div class="inquiry-card \${selectedInquiry === index ? 'selected' : ''}" onclick="selectInquiry(\${index})">
-                    <div class="inquiry-meta">
-                        <div class="inquiry-subject">\${inquiry.subject || 'No Subject'}</div>
-                        <div class="inquiry-time">\${new Date(inquiry.date || inquiry.timestamp).toLocaleTimeString()}</div>
-                    </div>
-                    <div class="inquiry-content">\${(inquiry.body || inquiry.content || '').substring(0, 100)}...</div>
-                    <div class="inquiry-tags">
-                        <span class="tag category">\${inquiry.category || 'General'}</span>
-                        <span class="tag sentiment">\${inquiry.priority || 'medium'} Priority</span>
-                        <span class="tag risk">\${inquiry.source || 'unknown'}</span>
-                    </div>
-                </div>
-            \`).join('');
+            const inquiryCards = [];
+            for (let i = 0; i < inquiries.length; i++) {
+                const inquiry = inquiries[i];
+                const isSelected = selectedInquiry === i ? 'selected' : '';
+                const subject = inquiry.subject || 'No Subject';
+                const time = new Date(inquiry.date_created || inquiry.timestamp).toLocaleTimeString();
+                const content = (inquiry.body || inquiry.content || '').substring(0, 100);
+                const category = inquiry.category || 'General';
+                const priority = inquiry.priority || 'medium';
+                const source = inquiry.source || 'unknown';
+                
+                const card = '<div class="inquiry-card ' + isSelected + '" onclick="selectInquiry(' + i + ')">' +
+                    '<div class="inquiry-meta">' +
+                        '<div class="inquiry-subject">' + subject + '</div>' +
+                        '<div class="inquiry-time">' + time + '</div>' +
+                    '</div>' +
+                    '<div class="inquiry-content">' + content + '...</div>' +
+                    '<div class="inquiry-tags">' +
+                        '<span class="tag category">' + category + '</span>' +
+                        '<span class="tag sentiment">' + priority + ' Priority</span>' +
+                        '<span class="tag risk">' + source + '</span>' +
+                    '</div>' +
+                '</div>';
+                inquiryCards.push(card);
+            }
+            container.innerHTML = inquiryCards.join('');
         }
         
         // Select inquiry
@@ -839,7 +937,7 @@ const threePanelApp = `
             renderInquiries();
             
             const inquiry = inquiries[index];
-            document.getElementById('response-editor').placeholder = \`Responding to: "\${inquiry.subject}"\\n\\nClick "Generate AI Response" to create a draft response.\`;
+            document.getElementById('response-editor').placeholder = 'Responding to: "' + (inquiry.subject || 'No Subject') + '"\n\nClick "Generate AI Response" to create a draft response.';
         }
         
         // Generate AI response
@@ -864,25 +962,18 @@ const threePanelApp = `
                 const data = await response.json();
                 editor.value = data.response;
             } catch (error) {
-                editor.value = \`Dear \${inquiry.sender || 'Valued Correspondent'},
-
-Thank you for your inquiry regarding \${inquiry.category.toLowerCase()}. We appreciate your interest in the Federal Reserve Bank of San Francisco's policies and operations.
-
-\${inquiry.category === 'Monetary Policy' ? 
+                editor.value = 'Dear ' + (inquiry.sender || 'Valued Correspondent') + ',\n\n' +
+'Thank you for your inquiry regarding ' + (inquiry.category || 'your request').toLowerCase() + '. We appreciate your interest in the Federal Reserve Bank of San Francisco\'s policies and operations.\n\n' +
+(inquiry.category === 'Monetary Policy' ? 
     'We understand your concerns about monetary policy decisions. The Federal Reserve carefully considers economic data and conditions when making policy decisions to promote maximum employment and price stability.' :
-    'We have received your inquiry and our team is reviewing the matter carefully.'
-}
-
-\${inquiry.riskLevel === 'High' ? 
+    'We have received your inquiry and our team is reviewing the matter carefully.') + '\n\n' +
+(inquiry.riskLevel === 'High' ? 
     'Given the nature of your inquiry, we want to ensure we provide you with the most accurate and comprehensive information. Our senior staff will review this matter and provide a detailed response.' :
-    'We strive to provide timely and accurate responses to all inquiries.'
-}
-
-If you have any additional questions or need further clarification, please don't hesitate to contact us.
-
-Best regards,
-External Communications Department
-Federal Reserve Bank of San Francisco\`;
+    'We strive to provide timely and accurate responses to all inquiries.') + '\n\n' +
+'If you have any additional questions or need further clarification, please don\'t hesitate to contact us.\n\n' +
+'Best regards,\n' +
+'External Communications Department\n' +
+'Federal Reserve Bank of San Francisco';
             }
         }
         
@@ -919,7 +1010,7 @@ Federal Reserve Bank of San Francisco\`;
                 const topics = ['Interest Rates', 'Inflation', 'Employment', 'Banking Regulation', 'Economic Outlook', 'Monetary Policy'];
                 
                 topicsContainer.innerHTML = topics.map(topic => 
-                    \`<span class="topic-tag">\${topic}</span>\`
+                    '<span class="topic-tag">' + topic + '</span>'
                 ).join('');
             } catch (error) {
                 console.error('Error loading topics:', error);
@@ -935,16 +1026,38 @@ Federal Reserve Bank of San Francisco\`;
                 'Unusual inquiry pattern identified'
             ];
             
-            alertsContainer.innerHTML = alerts.map(alert => \`
-                <div class="alert-item">
-                    <span class="material-icons alert-icon">warning</span>
-                    <span class="alert-text">\${alert}</span>
-                </div>
-            \`).join('');
+            alertsContainer.innerHTML = alerts.map(alert => 
+                '<div class="alert-item">' +
+                    '<span class="material-icons alert-icon">warning</span>' +
+                    '<span class="alert-text">' + alert + '</span>' +
+                '</div>'
+            ).join('');
         }
         
         // Initialize app
-        loadInquiries();
+        console.log('Initializing app...');
+        
+        // Simple test to see if JavaScript is working
+        const testContainer = document.getElementById('inquiries-list');
+        if (testContainer) {
+            testContainer.innerHTML = '<div style="padding: 1rem; color: #059669; font-weight: bold;">✅ JavaScript is working! Loading inquiries...</div>';
+        }
+        
+        // Force load sample data immediately for testing
+        console.log('Loading sample inquiries immediately...');
+        inquiries = getSampleInquiries();
+        
+        // Use setTimeout to ensure DOM is ready
+        setTimeout(() => {
+            console.log('Timeout: rendering inquiries...');
+            renderInquiries();
+        }, 1000);
+        
+        // Then try to load from API
+        setTimeout(() => {
+            loadInquiries();
+        }, 2000);
+        
         loadTopics();
         loadRiskAlerts();
         
