@@ -47,6 +47,8 @@ resource "aws_lambda_function" "backend" {
       DYNAMODB_INQUIRIES_TABLE = aws_dynamodb_table.inquiries.name
       DYNAMODB_TEMPLATES_TABLE = aws_dynamodb_table.response_templates.name
       DYNAMODB_ANALYTICS_TABLE = aws_dynamodb_table.analytics.name
+      DYNAMODB_SENTIMENT_TABLE = aws_dynamodb_table.sentiment_analysis.name
+      DYNAMODB_TRENDING_TABLE  = aws_dynamodb_table.trending_topics.name
       ENVIRONMENT             = var.environment
     }
   }

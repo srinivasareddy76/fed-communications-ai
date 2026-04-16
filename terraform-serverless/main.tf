@@ -160,6 +160,76 @@ resource "aws_dynamodb_table" "analytics" {
   }
 }
 
+# DynamoDB table for sentiment analysis results
+resource "aws_dynamodb_table" "sentiment_analysis" {
+  name           = "${var.project_name}-sentiment-${var.environment}"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "analysis_id"
+
+  attribute {
+    name = "analysis_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "date"
+    type = "S"
+  }
+
+  attribute {
+    name = "source"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name               = "date-source-index"
+    hash_key           = "date"
+    range_key          = "source"
+    projection_type    = "ALL"
+  }
+
+  tags = {
+    Name        = "Fed Communications Sentiment"
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}
+
+# DynamoDB table for trending topics and risk indicators
+resource "aws_dynamodb_table" "trending_topics" {
+  name           = "${var.project_name}-trending-${var.environment}"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "topic_id"
+
+  attribute {
+    name = "topic_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "date"
+    type = "S"
+  }
+
+  attribute {
+    name = "trend_score"
+    type = "N"
+  }
+
+  global_secondary_index {
+    name               = "trending-index"
+    hash_key           = "date"
+    range_key          = "trend_score"
+    projection_type    = "ALL"
+  }
+
+  tags = {
+    Name        = "Fed Communications Trending Topics"
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}
+
 # IAM role for Lambda functions
 resource "aws_iam_role" "lambda_role" {
   name = "${var.project_name}-lambda-role-${var.environment}"
@@ -219,7 +289,34 @@ resource "aws_iam_role_policy" "lambda_policy" {
           aws_dynamodb_table.response_templates.arn,
           "${aws_dynamodb_table.response_templates.arn}/index/*",
           aws_dynamodb_table.analytics.arn,
-          "${aws_dynamodb_table.analytics.arn}/index/*"
+          "${aws_dynamodb_table.analytics.arn}/index/*",
+          aws_dynamodb_table.sentiment_analysis.arn,
+          "${aws_dynamodb_table.sentiment_analysis.arn}/index/*",
+          aws_dynamodb_table.trending_topics.arn,
+          "${aws_dynamodb_table.trending_topics.arn}/index/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "comprehend:DetectSentiment",
+          "comprehend:DetectEntities",
+          "comprehend:DetectKeyPhrases",
+          "comprehend:ClassifyDocument",
+          "comprehend:DetectDominantLanguage"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "bedrock:InvokeModel",
+          "bedrock:InvokeModelWithResponseStream"
+        ]
+        Resource = [
+          "arn:aws:bedrock:*::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0",
+          "arn:aws:bedrock:*::foundation-model/anthropic.claude-3-haiku-20240307-v1:0",
+          "arn:aws:bedrock:*::foundation-model/amazon.titan-text-express-v1"
         ]
       }
     ]

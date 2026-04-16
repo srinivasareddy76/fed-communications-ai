@@ -2,18 +2,31 @@
 
 
 // Federal Reserve Communications AI - Backend Lambda Function
-// This function handles all API endpoints and DynamoDB operations
+// Enhanced with AWS AI services for NLP, sentiment analysis, and LLM integration
 
 const AWS = require('aws-sdk');
-const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto');
+
+// Simple UUID v4 generator to avoid ES module issues
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
 
 // Initialize AWS services
 const dynamodb = new AWS.DynamoDB.DocumentClient();
+const comprehend = new AWS.Comprehend();
+const bedrock = new AWS.BedrockRuntime();
 
 // Environment variables
 const INQUIRIES_TABLE = process.env.DYNAMODB_INQUIRIES_TABLE;
 const TEMPLATES_TABLE = process.env.DYNAMODB_TEMPLATES_TABLE;
 const ANALYTICS_TABLE = process.env.DYNAMODB_ANALYTICS_TABLE;
+const SENTIMENT_TABLE = process.env.DYNAMODB_SENTIMENT_TABLE;
+const TRENDING_TABLE = process.env.DYNAMODB_TRENDING_TABLE;
 
 // Sample Federal Reserve inquiries data
 const sampleInquiries = [
@@ -326,6 +339,381 @@ async function getDashboardAnalytics() {
     }
 }
 
+// AI-Powered Functions
+
+// Analyze sentiment using AWS Comprehend
+async function analyzeSentiment(text) {
+    try {
+        const params = {
+            Text: text,
+            LanguageCode: 'en'
+        };
+        
+        const result = await comprehend.detectSentiment(params).promise();
+        return {
+            sentiment: result.Sentiment,
+            confidence: result.SentimentScore[result.Sentiment],
+            scores: result.SentimentScore
+        };
+    } catch (error) {
+        console.error('Error analyzing sentiment:', error);
+        return {
+            sentiment: 'NEUTRAL',
+            confidence: 0.5,
+            scores: { POSITIVE: 0.33, NEGATIVE: 0.33, NEUTRAL: 0.34, MIXED: 0.0 }
+        };
+    }
+}
+
+// Extract key phrases and entities using AWS Comprehend
+async function extractKeyInformation(text) {
+    try {
+        const [keyPhrasesResult, entitiesResult] = await Promise.all([
+            comprehend.detectKeyPhrases({ Text: text, LanguageCode: 'en' }).promise(),
+            comprehend.detectEntities({ Text: text, LanguageCode: 'en' }).promise()
+        ]);
+
+        return {
+            keyPhrases: keyPhrasesResult.KeyPhrases.map(kp => kp.Text),
+            entities: entitiesResult.Entities.map(entity => ({
+                text: entity.Text,
+                type: entity.Type,
+                confidence: entity.Score
+            }))
+        };
+    } catch (error) {
+        console.error('Error extracting key information:', error);
+        return { keyPhrases: [], entities: [] };
+    }
+}
+
+// Classify communication category using keywords and entities
+function classifyInquiry(text, keyPhrases, entities) {
+    const categories = {
+        'monetary_policy': ['federal funds rate', 'interest rate', 'monetary policy', 'FOMC', 'policy decision'],
+        'inflation_policy': ['inflation', 'price stability', 'CPI', 'PCE', '2% target'],
+        'banking_supervision': ['stress test', 'banking supervision', 'capital requirements', 'regulation'],
+        'economic_analysis': ['employment', 'unemployment', 'GDP', 'economic growth', 'dual mandate'],
+        'communication_strategy': ['forward guidance', 'communication', 'market expectations', 'transparency'],
+        'research_inquiry': ['research', 'academic', 'study', 'analysis', 'methodology']
+    };
+
+    const textLower = text.toLowerCase();
+    const allKeywords = [...keyPhrases.map(kp => kp.toLowerCase()), ...entities.map(e => e.text.toLowerCase())];
+    
+    let bestCategory = 'general_inquiry';
+    let maxScore = 0;
+
+    for (const [category, keywords] of Object.entries(categories)) {
+        let score = 0;
+        keywords.forEach(keyword => {
+            if (textLower.includes(keyword.toLowerCase())) score += 2;
+            if (allKeywords.some(k => k.includes(keyword.toLowerCase()))) score += 1;
+        });
+        
+        if (score > maxScore) {
+            maxScore = score;
+            bestCategory = category;
+        }
+    }
+
+    return bestCategory;
+}
+
+// Generate response using AWS Bedrock
+async function generateResponse(inquiry, template) {
+    try {
+        const prompt = `You are a Federal Reserve communications specialist. Generate a professional response to this inquiry:
+
+Subject: ${inquiry.subject}
+Content: ${inquiry.content}
+Category: ${inquiry.category}
+
+Use this template as guidance but personalize it for the specific inquiry:
+${template ? template.template : 'Provide a professional, informative response addressing the inquiry while maintaining Federal Reserve communication standards.'}
+
+Response:`;
+
+        const params = {
+            modelId: 'anthropic.claude-3-haiku-20240307-v1:0',
+            contentType: 'application/json',
+            accept: 'application/json',
+            body: JSON.stringify({
+                anthropic_version: "bedrock-2023-05-31",
+                max_tokens: 500,
+                messages: [{
+                    role: "user",
+                    content: prompt
+                }]
+            })
+        };
+
+        const result = await bedrock.invokeModel(params).promise();
+        const response = JSON.parse(new TextDecoder().decode(result.body));
+        
+        return response.content[0].text;
+    } catch (error) {
+        console.error('Error generating response with Bedrock:', error);
+        return template ? template.template : 'Thank you for your inquiry. We will review your message and respond appropriately.';
+    }
+}
+
+// Store sentiment analysis results
+async function storeSentimentAnalysis(inquiryId, sentimentData) {
+    try {
+        const analysisId = uuidv4();
+        const item = {
+            analysis_id: analysisId,
+            inquiry_id: inquiryId,
+            date: new Date().toISOString().split('T')[0],
+            source: 'inquiry_analysis',
+            sentiment: sentimentData.sentiment,
+            confidence: sentimentData.confidence,
+            scores: sentimentData.scores,
+            timestamp: new Date().toISOString()
+        };
+
+        await dynamodb.put({
+            TableName: SENTIMENT_TABLE,
+            Item: item
+        }).promise();
+
+        return analysisId;
+    } catch (error) {
+        console.error('Error storing sentiment analysis:', error);
+        throw error;
+    }
+}
+
+// Update trending topics
+async function updateTrendingTopics(keyPhrases, entities) {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const topics = [...keyPhrases, ...entities.map(e => e.text)];
+
+        for (const topic of topics.slice(0, 5)) { // Limit to top 5 topics
+            const topicId = `${topic.toLowerCase().replace(/\s+/g, '_')}_${today}`;
+            
+            try {
+                // Try to get existing topic
+                const existing = await dynamodb.get({
+                    TableName: TRENDING_TABLE,
+                    Key: { topic_id: topicId }
+                }).promise();
+
+                const mentions = existing.Item ? existing.Item.mentions + 1 : 1;
+                const trendScore = mentions * 10; // Simple scoring algorithm
+
+                await dynamodb.put({
+                    TableName: TRENDING_TABLE,
+                    Item: {
+                        topic_id: topicId,
+                        topic: topic,
+                        date: today,
+                        mentions: mentions,
+                        trend_score: trendScore,
+                        last_updated: new Date().toISOString()
+                    }
+                }).promise();
+            } catch (error) {
+                console.error(`Error updating topic ${topic}:`, error);
+            }
+        }
+    } catch (error) {
+        console.error('Error updating trending topics:', error);
+    }
+}
+
+// Enhanced create inquiry with AI analysis
+async function createInquiryWithAI(inquiryData) {
+    try {
+        // Perform AI analysis
+        const [sentimentResult, keyInfo] = await Promise.all([
+            analyzeSentiment(inquiryData.content),
+            extractKeyInformation(inquiryData.content)
+        ]);
+
+        // Classify the inquiry
+        const category = classifyInquiry(inquiryData.content, keyInfo.keyPhrases, keyInfo.entities);
+
+        // Create enhanced inquiry object
+        const inquiry = {
+            inquiry_id: uuidv4(),
+            subject: inquiryData.subject,
+            content: inquiryData.content,
+            sender: inquiryData.sender || 'Unknown',
+            source: inquiryData.source || 'direct',
+            category: category,
+            priority: determinePriority(sentimentResult, keyInfo),
+            sentiment: sentimentResult.sentiment.toLowerCase(),
+            sentiment_confidence: sentimentResult.confidence,
+            keywords: keyInfo.keyPhrases.slice(0, 10),
+            entities: keyInfo.entities.slice(0, 5),
+            status: 'pending',
+            date_created: new Date().toISOString(),
+            ai_processed: true
+        };
+
+        // Store the inquiry
+        await dynamodb.put({
+            TableName: INQUIRIES_TABLE,
+            Item: inquiry
+        }).promise();
+
+        // Store sentiment analysis
+        await storeSentimentAnalysis(inquiry.inquiry_id, sentimentResult);
+
+        // Update trending topics
+        await updateTrendingTopics(keyInfo.keyPhrases, keyInfo.entities);
+
+        return inquiry;
+    } catch (error) {
+        console.error('Error creating inquiry with AI:', error);
+        throw error;
+    }
+}
+
+// Determine priority based on sentiment and content
+function determinePriority(sentimentResult, keyInfo) {
+    // High priority for negative sentiment or urgent keywords
+    if (sentimentResult.sentiment === 'NEGATIVE' && sentimentResult.confidence > 0.7) {
+        return 'high';
+    }
+    
+    const urgentKeywords = ['crisis', 'urgent', 'immediate', 'emergency', 'critical'];
+    const hasUrgentKeywords = keyInfo.keyPhrases.some(phrase => 
+        urgentKeywords.some(keyword => phrase.toLowerCase().includes(keyword))
+    );
+    
+    if (hasUrgentKeywords) return 'high';
+    
+    // Medium priority for mixed sentiment or important entities
+    if (sentimentResult.sentiment === 'MIXED' || 
+        keyInfo.entities.some(e => e.type === 'ORGANIZATION' && e.confidence > 0.8)) {
+        return 'medium';
+    }
+    
+    return 'low';
+}
+
+// Get AI-powered analytics
+async function getAIAnalytics() {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+        // Get recent sentiment data
+        const sentimentData = await dynamodb.query({
+            TableName: SENTIMENT_TABLE,
+            IndexName: 'date-source-index',
+            KeyConditionExpression: '#date BETWEEN :weekAgo AND :today',
+            ExpressionAttributeNames: { '#date': 'date' },
+            ExpressionAttributeValues: {
+                ':weekAgo': weekAgo,
+                ':today': today
+            }
+        }).promise();
+
+        // Get trending topics
+        const trendingData = await dynamodb.query({
+            TableName: TRENDING_TABLE,
+            IndexName: 'trending-index',
+            KeyConditionExpression: '#date = :today',
+            ExpressionAttributeNames: { '#date': 'date' },
+            ExpressionAttributeValues: { ':today': today },
+            ScanIndexForward: false,
+            Limit: 10
+        }).promise();
+
+        return {
+            sentiment_overview: calculateSentimentOverview(sentimentData.Items),
+            trending_topics: trendingData.Items,
+            ai_insights: generateInsights(sentimentData.Items, trendingData.Items)
+        };
+    } catch (error) {
+        console.error('Error getting AI analytics:', error);
+        return {
+            sentiment_overview: { positive: 0.33, neutral: 0.34, negative: 0.33 },
+            trending_topics: [],
+            ai_insights: []
+        };
+    }
+}
+
+// Calculate sentiment overview
+function calculateSentimentOverview(sentimentData) {
+    if (sentimentData.length === 0) {
+        return { positive: 0.33, neutral: 0.34, negative: 0.33 };
+    }
+
+    const totals = sentimentData.reduce((acc, item) => {
+        acc.positive += item.scores.POSITIVE || 0;
+        acc.neutral += item.scores.NEUTRAL || 0;
+        acc.negative += item.scores.NEGATIVE || 0;
+        return acc;
+    }, { positive: 0, neutral: 0, negative: 0 });
+
+    const count = sentimentData.length;
+    return {
+        positive: totals.positive / count,
+        neutral: totals.neutral / count,
+        negative: totals.negative / count
+    };
+}
+
+// Generate AI insights
+function generateInsights(sentimentData, trendingData) {
+    const insights = [];
+
+    // Sentiment trend insight
+    if (sentimentData.length > 0) {
+        const avgNegative = sentimentData.reduce((sum, item) => sum + (item.scores.NEGATIVE || 0), 0) / sentimentData.length;
+        if (avgNegative > 0.4) {
+            insights.push({
+                type: 'sentiment_alert',
+                level: 'medium',
+                message: 'Increased negative sentiment detected in recent communications',
+                recommendation: 'Consider reviewing communication strategy and addressing common concerns'
+            });
+        }
+    }
+
+    // Trending topics insight
+    if (trendingData.length > 0) {
+        const topTopic = trendingData[0];
+        if (topTopic.mentions > 5) {
+            insights.push({
+                type: 'trending_topic',
+                level: 'info',
+                message: `"${topTopic.topic}" is trending with ${topTopic.mentions} mentions`,
+                recommendation: 'Monitor this topic for potential communication opportunities'
+            });
+        }
+    }
+
+    return insights;
+}
+
+// Get template by category
+async function getTemplateByCategory(category) {
+    try {
+        const result = await dynamodb.query({
+            TableName: TEMPLATES_TABLE,
+            IndexName: 'category-template-index',
+            KeyConditionExpression: 'category = :category',
+            ExpressionAttributeValues: {
+                ':category': category
+            },
+            Limit: 1
+        }).promise();
+
+        return result.Items && result.Items.length > 0 ? result.Items[0] : null;
+    } catch (error) {
+        console.error('Error getting template by category:', error);
+        return null;
+    }
+}
+
 // Main Lambda handler
 exports.handler = async (event, context) => {
     console.log('Backend Lambda invoked:', JSON.stringify(event, null, 2));
@@ -349,9 +737,9 @@ exports.handler = async (event, context) => {
                 }
                 return createResponse(200, inquiry);
 
-            // POST /api/inquiries
+            // POST /api/inquiries - Enhanced with AI analysis
             case httpMethod === 'POST' && path === '/api/inquiries':
-                const newInquiry = await createInquiry(requestBody);
+                const newInquiry = await createInquiryWithAI(requestBody);
                 return createResponse(201, newInquiry);
 
             // PUT /api/inquiries/{id}
@@ -359,10 +747,60 @@ exports.handler = async (event, context) => {
                 const updatedInquiry = await updateInquiry(pathParameters.id, requestBody);
                 return createResponse(200, updatedInquiry);
 
-            // GET /api/dashboard/analytics
+            // GET /api/dashboard/analytics - Enhanced with AI insights
             case httpMethod === 'GET' && path === '/api/dashboard/analytics':
-                const analytics = await getDashboardAnalytics();
-                return createResponse(200, analytics);
+                const [basicAnalytics, aiAnalytics] = await Promise.all([
+                    getDashboardAnalytics(),
+                    getAIAnalytics()
+                ]);
+                return createResponse(200, { ...basicAnalytics, ...aiAnalytics });
+
+            // POST /api/inquiries/{id}/generate-response - AI-powered response generation
+            case httpMethod === 'POST' && path.match(/^\/api\/inquiries\/[^\/]+\/generate-response$/):
+                const inquiryId = pathParameters.id;
+                const targetInquiry = await getInquiryById(inquiryId);
+                if (!targetInquiry) {
+                    return createResponse(404, { error: 'Inquiry not found' });
+                }
+                
+                // Get appropriate template
+                const template = await getTemplateByCategory(targetInquiry.category);
+                const generatedResponse = await generateResponse(targetInquiry, template);
+                
+                return createResponse(200, { 
+                    generated_response: generatedResponse,
+                    template_used: template?.id || null
+                });
+
+            // GET /api/sentiment/overview - Sentiment analysis overview
+            case httpMethod === 'GET' && path === '/api/sentiment/overview':
+                const sentimentOverview = await getAIAnalytics();
+                return createResponse(200, sentimentOverview.sentiment_overview);
+
+            // GET /api/trending/topics - Trending topics analysis
+            case httpMethod === 'GET' && path === '/api/trending/topics':
+                const trendingAnalysis = await getAIAnalytics();
+                return createResponse(200, trendingAnalysis.trending_topics);
+
+            // POST /api/analyze/text - Real-time text analysis
+            case httpMethod === 'POST' && path === '/api/analyze/text':
+                if (!requestBody.text) {
+                    return createResponse(400, { error: 'Text is required' });
+                }
+                
+                const [sentiment, keyInfo] = await Promise.all([
+                    analyzeSentiment(requestBody.text),
+                    extractKeyInformation(requestBody.text)
+                ]);
+                
+                const category = classifyInquiry(requestBody.text, keyInfo.keyPhrases, keyInfo.entities);
+                
+                return createResponse(200, {
+                    sentiment: sentiment,
+                    key_phrases: keyInfo.keyPhrases,
+                    entities: keyInfo.entities,
+                    predicted_category: category
+                });
 
             // Handle OPTIONS requests (CORS preflight)
             case httpMethod === 'OPTIONS':

@@ -10,8 +10,9 @@ const html = `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fed Communications AI - Communication Management</title>
+    <title>Fed Communications AI - AI-Powered Communication Management</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -90,10 +91,11 @@ const html = `
         .main-content {
             flex: 1;
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr auto;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             gap: 1.5rem;
             height: calc(100vh - 200px);
+            overflow-y: auto;
+            padding: 1rem 0;
         }
 
         .panel {
@@ -412,10 +414,167 @@ const html = `
             100% { transform: rotate(360deg); }
         }
 
+        /* AI-Powered Features Styles */
+        .ai-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .ai-badge {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+
+        .sentiment-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .sentiment-bar {
+            flex: 1;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .sentiment-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .sentiment-positive { background: #10b981; }
+        .sentiment-neutral { background: #6b7280; }
+        .sentiment-negative { background: #ef4444; }
+
+        .trending-topic {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .trend-score {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .ai-insight {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #fbbf24;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .ai-insight.alert { border-left-color: #ef4444; }
+        .ai-insight.info { border-left-color: #3b82f6; }
+
+        .chart-container {
+            position: relative;
+            height: 200px;
+            margin: 1rem 0;
+        }
+
+        .ai-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .ai-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .ai-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .ai-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .text-analyzer {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+        }
+
+        .text-analyzer textarea {
+            width: 100%;
+            min-height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: white;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .text-analyzer textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .analysis-results {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .keyword-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 0.2rem;
+        }
+
+        .entity-tag {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.3);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 0.2rem;
+            border: 1px solid rgba(59, 130, 246, 0.5);
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
-                grid-template-rows: auto auto auto;
+                grid-template-rows: auto auto auto auto;
             }
             
             .header {
@@ -426,6 +585,10 @@ const html = `
             
             .insights-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .ai-controls {
+                justify-content: center;
             }
         }
     </style>
@@ -494,6 +657,146 @@ const html = `
                             <div class="spinner"></div>
                             Loading dashboard data...
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Sentiment Analysis Panel -->
+            <div class="panel ai-panel">
+                <div class="panel-header">
+                    <span class="material-icons">psychology</span>
+                    <span class="panel-title">AI Sentiment Analysis</span>
+                    <span class="ai-badge">AI</span>
+                </div>
+                <div class="panel-content">
+                    <div class="sentiment-indicator">
+                        <span>Positive:</span>
+                        <div class="sentiment-bar">
+                            <div class="sentiment-fill sentiment-positive" id="positiveBar" style="width: 33%"></div>
+                        </div>
+                        <span id="positivePercent">33%</span>
+                    </div>
+                    <div class="sentiment-indicator">
+                        <span>Neutral:</span>
+                        <div class="sentiment-bar">
+                            <div class="sentiment-fill sentiment-neutral" id="neutralBar" style="width: 34%"></div>
+                        </div>
+                        <span id="neutralPercent">34%</span>
+                    </div>
+                    <div class="sentiment-indicator">
+                        <span>Negative:</span>
+                        <div class="sentiment-bar">
+                            <div class="sentiment-fill sentiment-negative" id="negativeBar" style="width: 33%"></div>
+                        </div>
+                        <span id="negativePercent">33%</span>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="sentimentChart"></canvas>
+                    </div>
+                    
+                    <div class="ai-controls">
+                        <button class="ai-btn" onclick="refreshSentimentData()">
+                            <span class="material-icons">refresh</span>
+                            Refresh
+                        </button>
+                        <button class="ai-btn" onclick="exportSentimentReport()">
+                            <span class="material-icons">download</span>
+                            Export Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Trending Topics Panel -->
+            <div class="panel ai-panel">
+                <div class="panel-header">
+                    <span class="material-icons">trending_up</span>
+                    <span class="panel-title">Trending Topics</span>
+                    <span class="ai-badge">AI</span>
+                </div>
+                <div class="panel-content">
+                    <div id="trendingTopics">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            Analyzing trending topics...
+                        </div>
+                    </div>
+                    
+                    <div class="ai-controls">
+                        <button class="ai-btn" onclick="refreshTrendingTopics()">
+                            <span class="material-icons">refresh</span>
+                            Refresh
+                        </button>
+                        <button class="ai-btn" onclick="viewTopicDetails()">
+                            <span class="material-icons">analytics</span>
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Text Analyzer Panel -->
+            <div class="panel ai-panel">
+                <div class="panel-header">
+                    <span class="material-icons">text_fields</span>
+                    <span class="panel-title">Real-time Text Analyzer</span>
+                    <span class="ai-badge">AI</span>
+                </div>
+                <div class="panel-content">
+                    <div class="text-analyzer">
+                        <textarea 
+                            id="textAnalyzerInput" 
+                            placeholder="Paste text here to analyze sentiment, extract key phrases, and classify content..."
+                            oninput="debounceAnalyzeText()">
+                        </textarea>
+                        
+                        <div class="ai-controls">
+                            <button class="ai-btn" onclick="analyzeText()" id="analyzeBtn">
+                                <span class="material-icons">psychology</span>
+                                Analyze Text
+                            </button>
+                            <button class="ai-btn" onclick="clearAnalysis()">
+                                <span class="material-icons">clear</span>
+                                Clear
+                            </button>
+                        </div>
+                        
+                        <div class="analysis-results" id="analysisResults" style="display: none;">
+                            <h4>Analysis Results:</h4>
+                            <div id="sentimentResult"></div>
+                            <div id="categoryResult"></div>
+                            <div id="keyPhrasesResult"></div>
+                            <div id="entitiesResult"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Insights Panel -->
+            <div class="panel ai-panel">
+                <div class="panel-header">
+                    <span class="material-icons">lightbulb</span>
+                    <span class="panel-title">AI Insights & Recommendations</span>
+                    <span class="ai-badge">AI</span>
+                </div>
+                <div class="panel-content">
+                    <div id="aiInsights">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            Generating AI insights...
+                        </div>
+                    </div>
+                    
+                    <div class="ai-controls">
+                        <button class="ai-btn" onclick="refreshInsights()">
+                            <span class="material-icons">refresh</span>
+                            Refresh Insights
+                        </button>
+                        <button class="ai-btn" onclick="generateReport()">
+                            <span class="material-icons">assessment</span>
+                            Generate Report
+                        </button>
                     </div>
                 </div>
             </div>
@@ -788,6 +1091,280 @@ const html = `
                 </div>
             \`;
         }
+
+        // AI-Powered Functions
+
+        let sentimentChart = null;
+        let analysisTimeout = null;
+
+        // Initialize AI features
+        function initializeAI() {
+            loadSentimentData();
+            loadTrendingTopics();
+            loadAIInsights();
+            initializeSentimentChart();
+        }
+
+        // Initialize sentiment chart
+        function initializeSentimentChart() {
+            const ctx = document.getElementById('sentimentChart').getContext('2d');
+            sentimentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Positive', 'Neutral', 'Negative'],
+                    datasets: [{
+                        data: [33, 34, 33],
+                        backgroundColor: ['#10b981', '#6b7280', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: 'white' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load sentiment data
+        async function loadSentimentData() {
+            try {
+                const response = await fetch('/api/sentiment/overview');
+                const data = await response.json();
+                updateSentimentDisplay(data);
+            } catch (error) {
+                console.error('Error loading sentiment data:', error);
+            }
+        }
+
+        // Update sentiment display
+        function updateSentimentDisplay(data) {
+            const positive = Math.round(data.positive * 100);
+            const neutral = Math.round(data.neutral * 100);
+            const negative = Math.round(data.negative * 100);
+
+            document.getElementById('positiveBar').style.width = positive + '%';
+            document.getElementById('neutralBar').style.width = neutral + '%';
+            document.getElementById('negativeBar').style.width = negative + '%';
+
+            document.getElementById('positivePercent').textContent = positive + '%';
+            document.getElementById('neutralPercent').textContent = neutral + '%';
+            document.getElementById('negativePercent').textContent = negative + '%';
+
+            if (sentimentChart) {
+                sentimentChart.data.datasets[0].data = [positive, neutral, negative];
+                sentimentChart.update();
+            }
+        }
+
+        // Load trending topics
+        async function loadTrendingTopics() {
+            try {
+                const response = await fetch('/api/trending/topics');
+                const topics = await response.json();
+                renderTrendingTopics(topics);
+            } catch (error) {
+                console.error('Error loading trending topics:', error);
+                document.getElementById('trendingTopics').innerHTML = 
+                    '<div style="color: rgba(255,255,255,0.7);">Failed to load trending topics</div>';
+            }
+        }
+
+        // Render trending topics
+        function renderTrendingTopics(topics) {
+            const container = document.getElementById('trendingTopics');
+            
+            if (!topics || topics.length === 0) {
+                container.innerHTML = '<div style="color: rgba(255,255,255,0.7);">No trending topics found</div>';
+                return;
+            }
+
+            container.innerHTML = topics.slice(0, 5).map(topic => \`
+                <div class="trending-topic">
+                    <div>
+                        <strong>\${topic.topic}</strong>
+                        <div style="font-size: 0.8rem; opacity: 0.8;">\${topic.mentions} mentions</div>
+                    </div>
+                    <div class="trend-score">\${topic.trend_score}</div>
+                </div>
+            \`).join('');
+        }
+
+        // Load AI insights
+        async function loadAIInsights() {
+            try {
+                const response = await fetch('/api/dashboard/analytics');
+                const data = await response.json();
+                renderAIInsights(data.ai_insights || []);
+            } catch (error) {
+                console.error('Error loading AI insights:', error);
+                document.getElementById('aiInsights').innerHTML = 
+                    '<div style="color: rgba(255,255,255,0.7);">Failed to load AI insights</div>';
+            }
+        }
+
+        // Render AI insights
+        function renderAIInsights(insights) {
+            const container = document.getElementById('aiInsights');
+            
+            if (!insights || insights.length === 0) {
+                container.innerHTML = '<div style="color: rgba(255,255,255,0.7);">No insights available</div>';
+                return;
+            }
+
+            container.innerHTML = insights.map(insight => \`
+                <div class="ai-insight \${insight.level}">
+                    <h4>\${insight.type.replace('_', ' ').toUpperCase()}</h4>
+                    <p>\${insight.message}</p>
+                    <small><strong>Recommendation:</strong> \${insight.recommendation}</small>
+                </div>
+            \`).join('');
+        }
+
+        // Analyze text function
+        async function analyzeText() {
+            const text = document.getElementById('textAnalyzerInput').value.trim();
+            if (!text) {
+                alert('Please enter some text to analyze');
+                return;
+            }
+
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = '<div class="spinner"></div> Analyzing...';
+
+            try {
+                const response = await fetch('/api/analyze/text', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text })
+                });
+
+                const result = await response.json();
+                displayAnalysisResults(result);
+            } catch (error) {
+                console.error('Error analyzing text:', error);
+                alert('Failed to analyze text. Please try again.');
+            } finally {
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = '<span class="material-icons">psychology</span> Analyze Text';
+            }
+        }
+
+        // Display analysis results
+        function displayAnalysisResults(result) {
+            const resultsContainer = document.getElementById('analysisResults');
+            resultsContainer.style.display = 'block';
+
+            // Sentiment
+            const sentimentColor = result.sentiment.sentiment === 'POSITIVE' ? '#10b981' : 
+                                 result.sentiment.sentiment === 'NEGATIVE' ? '#ef4444' : '#6b7280';
+            document.getElementById('sentimentResult').innerHTML = \`
+                <p><strong>Sentiment:</strong> 
+                <span style="color: \${sentimentColor}; font-weight: bold;">
+                    \${result.sentiment.sentiment}
+                </span> 
+                (Confidence: \${Math.round(result.sentiment.confidence * 100)}%)</p>
+            \`;
+
+            // Category
+            document.getElementById('categoryResult').innerHTML = \`
+                <p><strong>Predicted Category:</strong> \${result.predicted_category.replace('_', ' ')}</p>
+            \`;
+
+            // Key phrases
+            document.getElementById('keyPhrasesResult').innerHTML = \`
+                <p><strong>Key Phrases:</strong></p>
+                <div>\${result.key_phrases.map(phrase => 
+                    \`<span class="keyword-tag">\${phrase}</span>\`
+                ).join('')}</div>
+            \`;
+
+            // Entities
+            document.getElementById('entitiesResult').innerHTML = \`
+                <p><strong>Entities:</strong></p>
+                <div>\${result.entities.map(entity => 
+                    \`<span class="entity-tag">\${entity.text} (\${entity.type})</span>\`
+                ).join('')}</div>
+            \`;
+        }
+
+        // Debounced text analysis
+        function debounceAnalyzeText() {
+            clearTimeout(analysisTimeout);
+            analysisTimeout = setTimeout(() => {
+                const text = document.getElementById('textAnalyzerInput').value.trim();
+                if (text.length > 50) { // Auto-analyze for longer texts
+                    analyzeText();
+                }
+            }, 2000);
+        }
+
+        // Clear analysis
+        function clearAnalysis() {
+            document.getElementById('textAnalyzerInput').value = '';
+            document.getElementById('analysisResults').style.display = 'none';
+        }
+
+        // Generate AI response for selected inquiry
+        async function generateResponse() {
+            if (selectedInquiry === null) {
+                alert('Please select an inquiry first');
+                return;
+            }
+
+            const inquiry = inquiries[selectedInquiry];
+            const responseEditor = document.getElementById('responseEditor');
+            
+            responseEditor.value = 'Generating AI response...';
+
+            try {
+                const response = await fetch(\`/api/inquiries/\${inquiry.inquiry_id}/generate-response\`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const result = await response.json();
+                responseEditor.value = result.generated_response;
+            } catch (error) {
+                console.error('Error generating response:', error);
+                responseEditor.value = 'Failed to generate response. Please try again.';
+            }
+        }
+
+        // Refresh functions
+        function refreshSentimentData() { loadSentimentData(); }
+        function refreshTrendingTopics() { loadTrendingTopics(); }
+        function refreshInsights() { loadAIInsights(); }
+
+        // Export functions (placeholder)
+        function exportSentimentReport() {
+            alert('Sentiment report export feature coming soon!');
+        }
+
+        function viewTopicDetails() {
+            alert('Topic details view coming soon!');
+        }
+
+        function generateReport() {
+            alert('AI insights report generation coming soon!');
+        }
+
+        // Enhanced initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            updateClock();
+            setInterval(updateClock, 1000);
+            loadInquiries();
+            loadDashboardData();
+            
+            // Initialize AI features after a short delay
+            setTimeout(initializeAI, 1000);
+        });
     </script>
 </body>
 </html>

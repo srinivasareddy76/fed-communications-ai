@@ -1,0 +1,53 @@
+
+[
+  {
+    "id": "template_monetary_policy_001",
+    "category": "monetary_policy",
+    "title": "Federal Funds Rate Decision Response",
+    "template": "Thank you for your inquiry regarding the Federal Reserve's monetary policy decisions. The Federal Open Market Committee (FOMC) considers a wide range of economic indicators when setting the federal funds rate, including employment levels, inflation trends, and overall economic growth. Our decisions are guided by our dual mandate to promote maximum employment and price stability. For the most current information on monetary policy decisions and their rationale, please refer to our official FOMC statements and meeting minutes available on our website at federalreserve.gov.",
+    "tone": "professional",
+    "approval_required": true,
+    "usage_count": 45,
+    "last_updated": "2024-04-10T10:00:00Z"
+  },
+  {
+    "id": "template_inflation_001",
+    "category": "inflation_policy",
+    "title": "Inflation Impact Response",
+    "template": "We understand your concerns about inflation's impact on businesses and consumers. The Federal Reserve is committed to bringing inflation back to our 2% target over time. Our monetary policy tools, including interest rate adjustments, are designed to help moderate inflationary pressures while supporting economic growth. We recognize that inflation affects different sectors and communities in various ways, and we carefully consider these impacts in our policy decisions. For detailed information about our approach to inflation, please visit our educational resources at federalreserve.gov/faqs.",
+    "tone": "empathetic",
+    "approval_required": false,
+    "usage_count": 32,
+    "last_updated": "2024-04-08T14:30:00Z"
+  },
+  {
+    "id": "template_economic_analysis_001",
+    "category": "economic_analysis",
+    "title": "Economic Indicators Analysis Response",
+    "template": "Thank you for sharing your regional economic analysis. The Federal Reserve closely monitors economic conditions across all regions and sectors as part of our comprehensive approach to monetary policy. Our dual mandate requires us to balance employment and price stability objectives, which sometimes involves navigating complex and potentially divergent economic indicators. We value the insights from regional Federal Reserve Banks and their analysis of local economic conditions, as this information helps inform our national policy decisions.",
+    "tone": "collaborative",
+    "approval_required": true,
+    "usage_count": 18,
+    "last_updated": "2024-04-12T09:15:00Z"
+  },
+  {
+    "id": "template_banking_supervision_001",
+    "category": "banking_supervision",
+    "title": "Banking Supervision and Regulation Response",
+    "template": "Thank you for your inquiry about our banking supervision activities. The Federal Reserve is committed to maintaining a safe and sound banking system through comprehensive supervision and regulation. Our stress testing program is designed to ensure that large banks can continue to lend and support the economy even during adverse economic conditions. We regularly review and update our supervisory approaches to reflect evolving risks and market conditions. Detailed information about our supervisory framework and stress testing methodologies is available in our published guidance and reports on our website.",
+    "tone": "authoritative",
+    "approval_required": true,
+    "usage_count": 28,
+    "last_updated": "2024-04-05T16:45:00Z"
+  },
+  {
+    "id": "template_research_001",
+    "category": "research_inquiry",
+    "title": "Research and Academic Inquiry Response",
+    "template": "Thank you for your interest in Federal Reserve research and policy communication. We appreciate academic engagement with our work and policy frameworks. The Federal Reserve publishes extensive research through our working paper series, economic data releases, and policy analysis. For specific research inquiries, we encourage you to review our published materials and consider reaching out to our research departments at the appropriate regional Federal Reserve Bank. Our commitment to transparency includes regular publication of research that informs our policy decisions.",
+    "tone": "academic",
+    "approval_required": false,
+    "usage_count": 12,
+    "last_updated": "2024-04-01T11:20:00Z"
+  }
+]

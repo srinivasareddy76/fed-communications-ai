@@ -1,0 +1,79 @@
+
+[
+  {
+    "date": "2024-04-15",
+    "overall_sentiment": {
+      "positive": 0.25,
+      "neutral": 0.45,
+      "negative": 0.30
+    },
+    "sentiment_by_category": {
+      "monetary_policy": {
+        "positive": 0.20,
+        "neutral": 0.50,
+        "negative": 0.30
+      },
+      "inflation_policy": {
+        "positive": 0.15,
+        "neutral": 0.35,
+        "negative": 0.50
+      },
+      "banking_supervision": {
+        "positive": 0.35,
+        "neutral": 0.45,
+        "negative": 0.20
+      },
+      "communication_strategy": {
+        "positive": 0.10,
+        "neutral": 0.40,
+        "negative": 0.50
+      }
+    },
+    "trending_topics": [
+      {
+        "topic": "federal funds rate",
+        "mentions": 156,
+        "sentiment_score": -0.2,
+        "trend": "increasing"
+      },
+      {
+        "topic": "inflation concerns",
+        "mentions": 134,
+        "sentiment_score": -0.4,
+        "trend": "stable"
+      },
+      {
+        "topic": "employment data",
+        "mentions": 89,
+        "sentiment_score": 0.3,
+        "trend": "increasing"
+      },
+      {
+        "topic": "banking stress tests",
+        "mentions": 67,
+        "sentiment_score": 0.1,
+        "trend": "decreasing"
+      },
+      {
+        "topic": "communication clarity",
+        "mentions": 45,
+        "sentiment_score": -0.3,
+        "trend": "increasing"
+      }
+    ],
+    "risk_indicators": [
+      {
+        "type": "communication_risk",
+        "level": "medium",
+        "description": "Increasing criticism about communication consistency",
+        "affected_topics": ["communication_strategy", "forward_guidance"]
+      },
+      {
+        "type": "policy_confusion",
+        "level": "low",
+        "description": "Some market participants expressing uncertainty about policy direction",
+        "affected_topics": ["monetary_policy", "interest_rates"]
+      }
+    ]
+  }
+]
