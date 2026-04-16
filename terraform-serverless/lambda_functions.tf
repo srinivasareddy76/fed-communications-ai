@@ -47,7 +47,6 @@ resource "aws_lambda_function" "backend" {
   environment {
     variables = {
       S3_SYNTHETIC_DATA_BUCKET = aws_s3_bucket.synthetic_data.bucket
-      AWS_REGION              = var.aws_region
       ENVIRONMENT             = var.environment
     }
   }
