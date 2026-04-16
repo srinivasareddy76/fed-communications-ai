@@ -839,7 +839,7 @@ const html = `
             try {
                 const response = await fetch('/api/inquiries');
                 const data = await response.json();
-                inquiries = data.inquiries || [];
+                inquiries = Array.isArray(data) ? data : (data.inquiries || []);
                 renderInquiries();
             } catch (error) {
                 console.error('Error loading inquiries:', error);
@@ -861,7 +861,7 @@ const html = `
                 <div class="inquiry-card \${selectedInquiry === index ? 'selected' : ''}" onclick="selectInquiry(\${index})">
                     <div class="inquiry-meta">
                         <div class="inquiry-subject">\${inquiry.subject || 'No Subject'}</div>
-                        <div class="inquiry-time">\${new Date(inquiry.date || inquiry.timestamp).toLocaleTimeString()}</div>
+                        <div class="inquiry-time">\${new Date(inquiry.date_created || inquiry.date || inquiry.timestamp || Date.now()).toLocaleString()}</div>
                     </div>
                     <div class="inquiry-content">\${(inquiry.body || inquiry.content || '').substring(0, 100)}...</div>
                     <div class="inquiry-tags">
@@ -1200,9 +1200,9 @@ const html = `
         // Load AI insights
         async function loadAIInsights() {
             try {
-                const response = await fetch('/api/dashboard/analytics');
+                const response = await fetch('/api/ai/insights');
                 const data = await response.json();
-                renderAIInsights(data.ai_insights || []);
+                renderAIInsights(data.insights || []);
             } catch (error) {
                 console.error('Error loading AI insights:', error);
                 document.getElementById('aiInsights').innerHTML = 
@@ -1220,9 +1220,10 @@ const html = `
             }
 
             container.innerHTML = insights.map(insight => \`
-                <div class="ai-insight \${insight.level}">
-                    <h4>\${insight.type.replace('_', ' ').toUpperCase()}</h4>
-                    <p>\${insight.message}</p>
+                <div class="ai-insight \${insight.impact}">
+                    <h4>\${insight.type.replace(/_/g, ' ').toUpperCase()}</h4>
+                    <p>\${insight.title}</p>
+                    <p style="font-size: 0.9em; opacity: 0.8;">\${insight.description}</p>
                     <small><strong>Recommendation:</strong> \${insight.recommendation}</small>
                 </div>
             \`).join('');

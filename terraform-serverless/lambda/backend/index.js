@@ -144,6 +144,23 @@ const getFallbackData = (dataType) => {
                 inflationRate: "3.2%",
                 gdpGrowth: "4.9%"
             },
+            // Frontend-expected format for dashboard
+            federalReserveRates: {
+                federalFundsRate: "5.25-5.50%",
+                discountRate: "5.50%",
+                tenYearTreasury: "4.28%"
+            },
+            economicIndicators: {
+                unemploymentRate: "3.7%",
+                corePCEInflation: "3.2%",
+                gdpGrowth: "4.9%"
+            },
+            communicationSentiment: {
+                positive: 65,
+                neutral: 25,
+                negative: 10
+            },
+            trendingTopics: ["Interest Rate Policy", "Inflation Control", "Regional Banking", "Employment Data", "FOMC Decisions", "CBDC Development"],
             marketImpact: {
                 sp500: "+0.8%",
                 usdIndex: "103.2",
@@ -151,24 +168,20 @@ const getFallbackData = (dataType) => {
             },
             priorityAlerts: [
                 {
-                    level: "high",
-                    message: "Surge in negative sentiment regarding regional bank stability",
-                    count: 12
+                    level: "🔴",
+                    message: "Surge in negative sentiment regarding regional bank stability"
                 },
                 {
-                    level: "medium", 
-                    message: "Congressional inquiry on CBDC timeline requires response within 48 hours",
-                    count: 3
+                    level: "🟡", 
+                    message: "Congressional inquiry on CBDC timeline requires response within 48 hours"
                 },
                 {
-                    level: "medium",
-                    message: "International coordination request from ECB on dollar policy",
-                    count: 2
+                    level: "🟡",
+                    message: "International coordination request from ECB on dollar policy"
                 },
                 {
-                    level: "low",
-                    message: "Academic research requests increasing for forward guidance data",
-                    count: 8
+                    level: "🟢",
+                    message: "Academic research requests increasing for forward guidance data"
                 }
             ]
         },
