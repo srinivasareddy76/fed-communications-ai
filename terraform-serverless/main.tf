@@ -261,32 +261,7 @@ resource "aws_api_gateway_rest_api" "fed_communications_api" {
   }
 }
 
-# API Gateway deployment
-resource "aws_api_gateway_deployment" "fed_communications_deployment" {
-  depends_on = [
-    aws_api_gateway_integration.frontend_integration,
-    aws_api_gateway_integration.backend_integration
-  ]
 
-  rest_api_id = aws_api_gateway_rest_api.fed_communications_api.id
-  stage_name  = var.environment
-
-  # Force redeployment on changes
-  triggers = {
-    redeployment = sha1(jsonencode([
-      aws_api_gateway_resource.api_resource.id,
-      aws_api_gateway_resource.proxy_resource.id,
-      aws_api_gateway_method.frontend_method.id,
-      aws_api_gateway_method.backend_method.id,
-      aws_api_gateway_integration.frontend_integration.id,
-      aws_api_gateway_integration.backend_integration.id,
-    ]))
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
 
 # API Gateway resources and methods
 resource "aws_api_gateway_resource" "api_resource" {
@@ -301,14 +276,6 @@ resource "aws_api_gateway_resource" "proxy_resource" {
   path_part   = "{proxy+}"
 }
 
-# Frontend method (root)
-resource "aws_api_gateway_method" "frontend_method" {
-  rest_api_id   = aws_api_gateway_rest_api.fed_communications_api.id
-  resource_id   = aws_api_gateway_rest_api.fed_communications_api.root_resource_id
-  http_method   = "ANY"
-  authorization = "NONE"
-}
-
 # Backend method (API routes)
 resource "aws_api_gateway_method" "backend_method" {
   rest_api_id   = aws_api_gateway_rest_api.fed_communications_api.id
@@ -320,18 +287,6 @@ resource "aws_api_gateway_method" "backend_method" {
     "method.request.path.proxy" = true
   }
 }
-
-# Frontend integration
-resource "aws_api_gateway_integration" "frontend_integration" {
-  rest_api_id = aws_api_gateway_rest_api.fed_communications_api.id
-  resource_id = aws_api_gateway_rest_api.fed_communications_api.root_resource_id
-  http_method = aws_api_gateway_method.frontend_method.http_method
-
-  integration_http_method = "POST"
-  type                   = "AWS_PROXY"
-  uri                    = aws_lambda_function.frontend.invoke_arn
-}
-
 # Backend integration
 resource "aws_api_gateway_integration" "backend_integration" {
   rest_api_id = aws_api_gateway_rest_api.fed_communications_api.id
@@ -346,30 +301,6 @@ resource "aws_api_gateway_integration" "backend_integration" {
     "integration.request.path.proxy" = "method.request.path.proxy"
   }
 }
-
-# Lambda permissions for API Gateway
-resource "aws_lambda_permission" "frontend_permission" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.frontend.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.fed_communications_api.execution_arn}/*/*"
-}
-
-resource "aws_lambda_permission" "backend_permission" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.backend.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.fed_communications_api.execution_arn}/*/*"
-}
-
-# Outputs
-output "api_gateway_url" {
-  description = "URL of the API Gateway"
-  value       = "https://${aws_api_gateway_rest_api.fed_communications_api.id}.execute-api.${var.aws_region}.amazonaws.com/${var.environment}"
-}
-
 output "s3_bucket_name" {
   description = "Name of the S3 bucket storing synthetic data"
   value       = aws_s3_bucket.synthetic_data.bucket

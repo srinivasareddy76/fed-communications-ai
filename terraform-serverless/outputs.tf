@@ -15,15 +15,9 @@ output "api_gateway_url" {
   value       = "https://${aws_api_gateway_rest_api.fed_communications_api.id}.execute-api.${var.aws_region}.amazonaws.com/${var.environment}"
 }
 
-output "dynamodb_tables" {
-  description = "DynamoDB table names"
-  value = {
-    inquiries         = aws_dynamodb_table.inquiries.name
-    response_templates = aws_dynamodb_table.response_templates.name
-    analytics         = aws_dynamodb_table.analytics.name
-    sentiment_analysis = aws_dynamodb_table.sentiment_analysis.name
-    trending_topics   = aws_dynamodb_table.trending_topics.name
-  }
+output "s3_data_bucket" {
+  description = "S3 bucket storing synthetic data"
+  value = aws_s3_bucket.synthetic_data.bucket
 }
 
 output "lambda_functions" {
