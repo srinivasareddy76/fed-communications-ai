@@ -591,6 +591,88 @@ const html = `
                 justify-content: center;
             }
         }
+        /* Analytics Overview Styles */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .analytics-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .analytics-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .analytics-icon {
+            font-size: 2rem;
+            opacity: 0.9;
+        }
+
+        .analytics-content {
+            flex: 1;
+        }
+
+        .analytics-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.2rem;
+        }
+
+        .analytics-label {
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 0.3rem;
+        }
+
+        .analytics-trend {
+            font-size: 0.8rem;
+            color: #10b981;
+            font-weight: 500;
+        }
+
+        .recent-activity {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 1rem;
+        }
+
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            min-width: 80px;
+        }
+
+        .activity-text {
+            flex: 1;
+            margin-left: 1rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -642,6 +724,66 @@ const html = `
                             <span class="material-icons" style="font-size: 1rem;">send</span>
                             Send Response
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Communication Analytics Overview -->
+            <div class="panel ai-panel">
+                <div class="panel-header">
+                    <span class="material-icons">analytics</span>
+                    <span class="panel-title">Communication Analytics Overview</span>
+                    <span class="ai-badge">AI</span>
+                </div>
+                <div class="panel-content">
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <div class="analytics-icon">📊</div>
+                            <div class="analytics-content">
+                                <div class="analytics-number">247</div>
+                                <div class="analytics-label">Total Inquiries</div>
+                                <div class="analytics-trend">+12% this week</div>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <div class="analytics-icon">⚡</div>
+                            <div class="analytics-content">
+                                <div class="analytics-number">2.1h</div>
+                                <div class="analytics-label">Avg Response Time</div>
+                                <div class="analytics-trend">-15% improvement</div>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <div class="analytics-icon">🎯</div>
+                            <div class="analytics-content">
+                                <div class="analytics-number">94%</div>
+                                <div class="analytics-label">Resolution Rate</div>
+                                <div class="analytics-trend">+3% this month</div>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <div class="analytics-icon">🔥</div>
+                            <div class="analytics-content">
+                                <div class="analytics-number">18</div>
+                                <div class="analytics-label">High Priority</div>
+                                <div class="analytics-trend">Requires attention</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recent-activity">
+                        <h4 style="margin: 1rem 0 0.5rem 0; color: #e2e8f0;">Recent Activity</h4>
+                        <div class="activity-item">
+                            <span class="activity-time">2 min ago</span>
+                            <span class="activity-text">Congressional inquiry on CBDC timeline received</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">15 min ago</span>
+                            <span class="activity-text">AI response generated for regional banking inquiry</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">32 min ago</span>
+                            <span class="activity-text">Sentiment analysis completed for 12 new communications</span>
+                        </div>
                     </div>
                 </div>
             </div>
