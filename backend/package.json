@@ -1,28 +1,43 @@
 {
-  "name": "backend",
+  "name": "fed-communications-ai-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Federal Reserve Communications AI Backend Server",
+  "main": "server.js",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
     "start": "node server.js",
+    "start:simple": "node server-simple.js",
     "dev": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "diagnose": "node diagnose.js",
+    "test": "node diagnose.js && echo 'Diagnostics completed'",
+    "postinstall": "echo 'Dependencies installed successfully'"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "federal-reserve",
+    "communications",
+    "ai",
+    "backend"
+  ],
+  "author": "Fed Communications AI Team",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "body-parser": "^2.2.2",
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "helmet": "^8.1.0",
-    "lodash": "^4.18.1",
-    "moment": "^2.30.1",
-    "morgan": "^1.10.1",
-    "natural": "^8.1.1",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "morgan": "^1.10.0",
+    "natural": "^6.12.0",
     "sentiment": "^5.0.2",
-    "socket.io": "^4.8.3",
-    "uuid": "^13.0.0",
-    "ws": "^8.20.0"
+    "socket.io": "^4.7.5",
+    "uuid": "^9.0.1",
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   }
 }
