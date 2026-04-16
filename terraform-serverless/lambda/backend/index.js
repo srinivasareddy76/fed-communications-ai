@@ -348,7 +348,10 @@ exports.handler = async (event) => {
         
         const { httpMethod, path, pathParameters, body } = event;
         
-        console.log(`Processing ${httpMethod} ${path}`);
+        // Normalize path to handle both /api/ and /v1/ prefixes
+        const normalizedPath = path.replace(/^\/v1\//, '/api/');
+        
+        console.log(`Processing ${httpMethod} ${path} (normalized: ${normalizedPath})`);
         
         // Handle CORS preflight
         if (httpMethod === 'OPTIONS') {
@@ -356,7 +359,7 @@ exports.handler = async (event) => {
         }
         
         // Route handling
-        if (httpMethod === 'GET' && path === '/api/inquiries') {
+        if (httpMethod === 'GET' && normalizedPath === '/api/inquiries') {
             try {
                 const inquiries = await loadDataFromS3('communications.json');
                 return createResponse(200, inquiries || getFallbackData('inquiries'));
@@ -366,7 +369,7 @@ exports.handler = async (event) => {
             }
         }
         
-        if (httpMethod === 'GET' && path.startsWith('/api/dashboard/')) {
+        if (httpMethod === 'GET' && normalizedPath.startsWith('/api/dashboard/')) {
             const dashboardType = pathParameters?.id || 'analytics';
             
             try {
@@ -385,7 +388,7 @@ exports.handler = async (event) => {
             }
         }
         
-        if (httpMethod === 'GET' && path.startsWith('/api/sentiment/')) {
+        if (httpMethod === 'GET' && normalizedPath.startsWith('/api/sentiment/')) {
             const sentimentType = pathParameters?.id || 'overview';
             
             try {
@@ -397,7 +400,7 @@ exports.handler = async (event) => {
             }
         }
         
-        if (httpMethod === 'GET' && path.startsWith('/api/trending/')) {
+        if (httpMethod === 'GET' && normalizedPath.startsWith('/api/trending/')) {
             const trendingType = pathParameters?.id || 'topics';
             
             try {
@@ -409,7 +412,7 @@ exports.handler = async (event) => {
             }
         }
         
-        if (httpMethod === 'GET' && path.startsWith('/api/ai/')) {
+        if (httpMethod === 'GET' && normalizedPath.startsWith('/api/ai/')) {
             const aiType = pathParameters?.id || 'insights';
             
             try {
@@ -421,7 +424,7 @@ exports.handler = async (event) => {
             }
         }
         
-        if (httpMethod === 'POST' && path.startsWith('/api/analyze/')) {
+        if (httpMethod === 'POST' && normalizedPath.startsWith('/api/analyze/')) {
             const analyzeType = pathParameters?.id || 'text';
             
             if (analyzeType === 'text') {
@@ -437,7 +440,7 @@ exports.handler = async (event) => {
             }
         }
         
-        if (httpMethod === 'POST' && path === '/api/inquiries') {
+        if (httpMethod === 'POST' && normalizedPath === '/api/inquiries') {
             const requestBody = JSON.parse(body || '{}');
             
             // Create new inquiry (in production, this would save to S3 or database)
@@ -451,7 +454,7 @@ exports.handler = async (event) => {
             return createResponse(201, newInquiry);
         }
         
-        if (httpMethod === 'POST' && path.startsWith('/api/generate/')) {
+        if (httpMethod === 'POST' && normalizedPath.startsWith('/api/generate/')) {
             const generateType = pathParameters?.id || 'response';
             
             if (generateType === 'response') {
@@ -475,6 +478,7 @@ exports.handler = async (event) => {
         return createResponse(404, { 
             error: 'Endpoint not found',
             path: path,
+            normalizedPath: normalizedPath,
             method: httpMethod
         });
         
