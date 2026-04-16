@@ -1,0 +1,391 @@
+
+
+{
+  "sentiment_analysis": {
+    "overall_sentiment": {
+      "score": 0.68,
+      "distribution": {
+        "positive": 42,
+        "neutral": 38,
+        "negative": 20
+      },
+      "confidence": 0.87,
+      "trend": "+5.2%",
+      "last_updated": "2024-04-15T18:30:00Z"
+    },
+    "sentiment_by_category": {
+      "monetary_policy": {
+        "positive": 35,
+        "neutral": 45,
+        "negative": 20,
+        "avg_confidence": 0.82
+      },
+      "banking_supervision": {
+        "positive": 25,
+        "neutral": 40,
+        "negative": 35,
+        "avg_confidence": 0.78
+      },
+      "consumer_protection": {
+        "positive": 50,
+        "neutral": 30,
+        "negative": 20,
+        "avg_confidence": 0.85
+      },
+      "financial_stability": {
+        "positive": 20,
+        "neutral": 35,
+        "negative": 45,
+        "avg_confidence": 0.89
+      },
+      "payment_systems": {
+        "positive": 60,
+        "neutral": 30,
+        "negative": 10,
+        "avg_confidence": 0.76
+      }
+    },
+    "sentiment_by_source": {
+      "media": {
+        "positive": 30,
+        "neutral": 45,
+        "negative": 25,
+        "total_analyzed": 89
+      },
+      "public": {
+        "positive": 40,
+        "neutral": 35,
+        "negative": 25,
+        "total_analyzed": 67
+      },
+      "congress": {
+        "positive": 45,
+        "neutral": 40,
+        "negative": 15,
+        "total_analyzed": 34
+      },
+      "academic": {
+        "positive": 65,
+        "neutral": 30,
+        "negative": 5,
+        "total_analyzed": 28
+      }
+    },
+    "temporal_sentiment": {
+      "hourly_breakdown": [
+        { "hour": "09:00", "positive": 38, "neutral": 42, "negative": 20 },
+        { "hour": "10:00", "positive": 42, "neutral": 38, "negative": 20 },
+        { "hour": "11:00", "positive": 45, "neutral": 35, "negative": 20 },
+        { "hour": "12:00", "positive": 40, "neutral": 40, "negative": 20 },
+        { "hour": "13:00", "positive": 35, "neutral": 40, "negative": 25 },
+        { "hour": "14:00", "positive": 30, "neutral": 45, "negative": 25 },
+        { "hour": "15:00", "positive": 35, "neutral": 40, "negative": 25 },
+        { "hour": "16:00", "positive": 40, "neutral": 38, "negative": 22 },
+        { "hour": "17:00", "positive": 42, "neutral": 36, "negative": 22 },
+        { "hour": "18:00", "positive": 44, "neutral": 36, "negative": 20 }
+      ]
+    }
+  },
+  "key_phrase_extraction": {
+    "top_phrases": [
+      {
+        "phrase": "federal funds rate",
+        "frequency": 156,
+        "sentiment": "neutral",
+        "confidence": 0.92,
+        "trend": "+8%"
+      },
+      {
+        "phrase": "inflation expectations",
+        "frequency": 134,
+        "sentiment": "negative",
+        "confidence": 0.88,
+        "trend": "+12%"
+      },
+      {
+        "phrase": "banking stability",
+        "frequency": 98,
+        "sentiment": "negative",
+        "confidence": 0.85,
+        "trend": "+25%"
+      },
+      {
+        "phrase": "employment data",
+        "frequency": 87,
+        "sentiment": "positive",
+        "confidence": 0.79,
+        "trend": "+3%"
+      },
+      {
+        "phrase": "monetary policy",
+        "frequency": 76,
+        "sentiment": "neutral",
+        "confidence": 0.83,
+        "trend": "+5%"
+      },
+      {
+        "phrase": "economic outlook",
+        "frequency": 65,
+        "sentiment": "mixed",
+        "confidence": 0.77,
+        "trend": "+7%"
+      },
+      {
+        "phrase": "financial markets",
+        "frequency": 54,
+        "sentiment": "neutral",
+        "confidence": 0.81,
+        "trend": "-2%"
+      },
+      {
+        "phrase": "digital currency",
+        "frequency": 43,
+        "sentiment": "positive",
+        "confidence": 0.74,
+        "trend": "+18%"
+      }
+    ],
+    "emerging_phrases": [
+      {
+        "phrase": "climate risk assessment",
+        "frequency": 23,
+        "growth_rate": "+45%",
+        "sentiment": "neutral"
+      },
+      {
+        "phrase": "AI in banking",
+        "frequency": 18,
+        "growth_rate": "+67%",
+        "sentiment": "positive"
+      },
+      {
+        "phrase": "cross-border payments",
+        "frequency": 15,
+        "growth_rate": "+38%",
+        "sentiment": "neutral"
+      }
+    ]
+  },
+  "entity_recognition": {
+    "organizations": [
+      {
+        "entity": "Federal Reserve",
+        "mentions": 234,
+        "confidence": 0.96,
+        "sentiment": "neutral",
+        "context": ["monetary policy", "banking supervision", "financial stability"]
+      },
+      {
+        "entity": "FOMC",
+        "mentions": 89,
+        "confidence": 0.94,
+        "sentiment": "neutral",
+        "context": ["interest rates", "policy decisions", "economic projections"]
+      },
+      {
+        "entity": "Treasury Department",
+        "mentions": 45,
+        "confidence": 0.91,
+        "sentiment": "neutral",
+        "context": ["fiscal policy", "debt management", "economic coordination"]
+      },
+      {
+        "entity": "European Central Bank",
+        "mentions": 23,
+        "confidence": 0.89,
+        "sentiment": "neutral",
+        "context": ["international coordination", "monetary policy", "currency policy"]
+      }
+    ],
+    "financial_instruments": [
+      {
+        "entity": "federal funds rate",
+        "mentions": 156,
+        "confidence": 0.98,
+        "current_value": "5.25-5.50%"
+      },
+      {
+        "entity": "Treasury bonds",
+        "mentions": 67,
+        "confidence": 0.92,
+        "current_value": "4.28%"
+      },
+      {
+        "entity": "mortgage rates",
+        "mentions": 54,
+        "confidence": 0.87,
+        "current_value": "7.2%"
+      }
+    ],
+    "economic_indicators": [
+      {
+        "entity": "inflation rate",
+        "mentions": 123,
+        "confidence": 0.95,
+        "current_value": "3.2%"
+      },
+      {
+        "entity": "unemployment rate",
+        "mentions": 89,
+        "confidence": 0.93,
+        "current_value": "3.7%"
+      },
+      {
+        "entity": "GDP growth",
+        "mentions": 67,
+        "confidence": 0.88,
+        "current_value": "4.9%"
+      }
+    ]
+  },
+  "text_classification": {
+    "category_accuracy": {
+      "monetary_policy": 0.94,
+      "banking_supervision": 0.89,
+      "consumer_protection": 0.92,
+      "financial_stability": 0.87,
+      "payment_systems": 0.85,
+      "overall": 0.89
+    },
+    "priority_classification": {
+      "high": {
+        "accuracy": 0.91,
+        "precision": 0.88,
+        "recall": 0.93
+      },
+      "medium": {
+        "accuracy": 0.85,
+        "precision": 0.82,
+        "recall": 0.87
+      },
+      "low": {
+        "accuracy": 0.89,
+        "precision": 0.86,
+        "recall": 0.91
+      }
+    }
+  },
+  "predictive_analytics": {
+    "volume_predictions": {
+      "next_24h": {
+        "total_inquiries": 45,
+        "confidence": 0.82,
+        "breakdown": {
+          "media": 18,
+          "public": 15,
+          "congress": 8,
+          "academic": 4
+        }
+      },
+      "next_week": {
+        "total_inquiries": 280,
+        "confidence": 0.75,
+        "peak_days": ["Tuesday", "Wednesday"]
+      }
+    },
+    "sentiment_predictions": {
+      "next_24h": {
+        "positive": 40,
+        "neutral": 42,
+        "negative": 18,
+        "confidence": 0.78
+      },
+      "trend_factors": [
+        "FOMC meeting minutes release",
+        "Employment report publication",
+        "Congressional hearing schedule"
+      ]
+    },
+    "topic_predictions": {
+      "rising_topics": [
+        {
+          "topic": "CBDC development",
+          "predicted_growth": "+35%",
+          "confidence": 0.81
+        },
+        {
+          "topic": "Climate risk",
+          "predicted_growth": "+28%",
+          "confidence": 0.76
+        }
+      ],
+      "declining_topics": [
+        {
+          "topic": "COVID impact",
+          "predicted_decline": "-45%",
+          "confidence": 0.89
+        }
+      ]
+    }
+  },
+  "response_optimization": {
+    "template_effectiveness": {
+      "monetary_policy_001": {
+        "usage_count": 45,
+        "satisfaction_score": 4.2,
+        "avg_response_time": "1.8 hours"
+      },
+      "banking_supervision_001": {
+        "usage_count": 23,
+        "satisfaction_score": 4.0,
+        "avg_response_time": "2.4 hours"
+      },
+      "consumer_protection_001": {
+        "usage_count": 34,
+        "satisfaction_score": 4.5,
+        "avg_response_time": "3.1 hours"
+      }
+    },
+    "personalization_insights": {
+      "media_preferences": {
+        "preferred_tone": "formal",
+        "preferred_length": "detailed",
+        "response_time_expectation": "< 2 hours"
+      },
+      "public_preferences": {
+        "preferred_tone": "accessible",
+        "preferred_length": "concise",
+        "response_time_expectation": "< 4 hours"
+      },
+      "congress_preferences": {
+        "preferred_tone": "formal",
+        "preferred_length": "comprehensive",
+        "response_time_expectation": "< 1 hour"
+      }
+    }
+  },
+  "anomaly_detection": {
+    "recent_anomalies": [
+      {
+        "type": "sentiment_spike",
+        "description": "Unusual negative sentiment spike in regional banking topics",
+        "timestamp": "2024-04-15T17:30:00Z",
+        "severity": "medium",
+        "confidence": 0.87
+      },
+      {
+        "type": "volume_surge",
+        "description": "35% increase in CBDC-related inquiries",
+        "timestamp": "2024-04-15T15:45:00Z",
+        "severity": "low",
+        "confidence": 0.92
+      }
+    ],
+    "pattern_recognition": {
+      "weekly_patterns": {
+        "monday": "High congressional inquiries",
+        "tuesday": "Peak media activity",
+        "wednesday": "FOMC-related discussions",
+        "thursday": "Academic research requests",
+        "friday": "Public inquiries increase"
+      },
+      "seasonal_patterns": {
+        "q1": "Budget and fiscal policy focus",
+        "q2": "Employment and inflation emphasis",
+        "q3": "Banking supervision peak",
+        "q4": "Year-end policy reviews"
+      }
+    }
+  }
+}
+

@@ -1,0 +1,210 @@
+
+{
+  "overview_metrics": {
+    "total_inquiries": 247,
+    "pending_responses": 34,
+    "avg_response_time": "2.1 hours",
+    "sentiment_score": 0.68,
+    "last_updated": "2024-04-15T18:30:00Z"
+  },
+  "federal_reserve_rates": {
+    "federal_funds_rate": "5.25-5.50%",
+    "discount_rate": "5.50%",
+    "ten_year_treasury": "4.28%",
+    "prime_rate": "8.50%",
+    "last_updated": "2024-04-15T16:00:00Z"
+  },
+  "economic_indicators": {
+    "unemployment_rate": "3.7%",
+    "core_pce_inflation": "3.2%",
+    "gdp_growth": "4.9%",
+    "consumer_confidence": "102.3",
+    "housing_starts": "1.42M",
+    "industrial_production": "+0.4%",
+    "last_updated": "2024-04-15T14:00:00Z"
+  },
+  "communication_sentiment": {
+    "positive": 42,
+    "neutral": 38,
+    "negative": 20,
+    "total_analyzed": 247,
+    "trend": "+5.2%",
+    "last_week_comparison": {
+      "positive": 38,
+      "neutral": 41,
+      "negative": 21
+    }
+  },
+  "trending_topics": [
+    {
+      "topic": "Interest Rates",
+      "mentions": 89,
+      "trend_score": 8.7,
+      "sentiment": "mixed",
+      "change_24h": "+12%"
+    },
+    {
+      "topic": "Inflation Control",
+      "mentions": 67,
+      "trend_score": 7.8,
+      "sentiment": "negative",
+      "change_24h": "+8%"
+    },
+    {
+      "topic": "Banking Supervision",
+      "mentions": 45,
+      "trend_score": 6.9,
+      "sentiment": "neutral",
+      "change_24h": "+15%"
+    },
+    {
+      "topic": "Employment Data",
+      "mentions": 38,
+      "trend_score": 6.2,
+      "sentiment": "positive",
+      "change_24h": "+3%"
+    },
+    {
+      "topic": "FOMC Decisions",
+      "mentions": 34,
+      "trend_score": 5.8,
+      "sentiment": "neutral",
+      "change_24h": "-2%"
+    },
+    {
+      "topic": "Regional Banks",
+      "mentions": 29,
+      "trend_score": 5.4,
+      "sentiment": "negative",
+      "change_24h": "+22%"
+    },
+    {
+      "topic": "Digital Currency",
+      "mentions": 23,
+      "trend_score": 4.9,
+      "sentiment": "positive",
+      "change_24h": "+18%"
+    },
+    {
+      "topic": "Climate Risk",
+      "mentions": 18,
+      "trend_score": 4.1,
+      "sentiment": "neutral",
+      "change_24h": "+7%"
+    }
+  ],
+  "priority_alerts": [
+    {
+      "id": "alert_001",
+      "level": "high",
+      "message": "Surge in negative sentiment regarding regional bank stability",
+      "timestamp": "2024-04-15T17:45:00Z",
+      "source": "media",
+      "action_required": true
+    },
+    {
+      "id": "alert_002",
+      "level": "medium",
+      "message": "Congressional inquiry on CBDC timeline requires response within 48 hours",
+      "timestamp": "2024-04-15T15:30:00Z",
+      "source": "congress",
+      "action_required": true
+    },
+    {
+      "id": "alert_003",
+      "level": "medium",
+      "message": "International coordination request from ECB on dollar policy",
+      "timestamp": "2024-04-15T13:20:00Z",
+      "source": "international",
+      "action_required": false
+    },
+    {
+      "id": "alert_004",
+      "level": "low",
+      "message": "Academic research requests increasing for forward guidance data",
+      "timestamp": "2024-04-15T11:10:00Z",
+      "source": "academic",
+      "action_required": false
+    }
+  ],
+  "market_impact": {
+    "sp500": "+0.8%",
+    "nasdaq": "+1.2%",
+    "dow_jones": "+0.6%",
+    "usd_index": "103.2",
+    "vix": "16.4",
+    "ten_year_yield": "4.28%",
+    "two_year_yield": "4.85%",
+    "last_updated": "2024-04-15T16:00:00Z"
+  },
+  "response_metrics": {
+    "avg_response_time_by_category": {
+      "monetary_policy": "1.8 hours",
+      "banking_supervision": "2.4 hours",
+      "consumer_protection": "3.1 hours",
+      "financial_stability": "1.2 hours",
+      "payment_systems": "2.7 hours"
+    },
+    "completion_rate": "94.2%",
+    "satisfaction_score": "4.3/5.0",
+    "escalation_rate": "8.1%"
+  },
+  "ai_insights": [
+    {
+      "type": "sentiment_trend",
+      "level": "info",
+      "message": "Communication sentiment has improved by 5.2% over the past week",
+      "recommendation": "Continue current messaging strategy for monetary policy communications",
+      "confidence": 0.87,
+      "timestamp": "2024-04-15T18:00:00Z"
+    },
+    {
+      "type": "topic_analysis",
+      "level": "warning",
+      "message": "22% increase in regional banking concerns detected in the last 24 hours",
+      "recommendation": "Prepare proactive communication on banking sector stability measures",
+      "confidence": 0.92,
+      "timestamp": "2024-04-15T17:30:00Z"
+    },
+    {
+      "type": "response_optimization",
+      "level": "success",
+      "message": "Average response time decreased to 2.1 hours, meeting target SLA",
+      "recommendation": "Maintain current staffing levels during peak inquiry periods",
+      "confidence": 0.95,
+      "timestamp": "2024-04-15T16:45:00Z"
+    },
+    {
+      "type": "predictive_analysis",
+      "level": "info",
+      "message": "CBDC-related inquiries predicted to increase 35% following Senate hearing",
+      "recommendation": "Pre-draft response templates for common CBDC questions",
+      "confidence": 0.78,
+      "timestamp": "2024-04-15T15:20:00Z"
+    },
+    {
+      "type": "communication_effectiveness",
+      "level": "warning",
+      "message": "Mixed messaging perception detected in inflation communication",
+      "recommendation": "Review and align inflation-related response templates",
+      "confidence": 0.83,
+      "timestamp": "2024-04-15T14:10:00Z"
+    }
+  ],
+  "geographic_distribution": {
+    "northeast": 28,
+    "southeast": 22,
+    "midwest": 19,
+    "southwest": 16,
+    "west": 15,
+    "international": 12
+  },
+  "source_breakdown": {
+    "media": 89,
+    "public": 67,
+    "congress": 34,
+    "academic": 28,
+    "financial_institutions": 21,
+    "international": 8
+  }
+}

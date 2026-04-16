@@ -1,0 +1,271 @@
+
+
+{
+  "sentiment_history": {
+    "daily_trends": [
+      {
+        "date": "2024-04-09",
+        "positive": 38,
+        "neutral": 42,
+        "negative": 20,
+        "total_inquiries": 156,
+        "key_events": ["FOMC Meeting Minutes Released"]
+      },
+      {
+        "date": "2024-04-10",
+        "positive": 35,
+        "neutral": 45,
+        "negative": 20,
+        "total_inquiries": 178,
+        "key_events": ["Employment Report Published"]
+      },
+      {
+        "date": "2024-04-11",
+        "positive": 40,
+        "neutral": 38,
+        "negative": 22,
+        "total_inquiries": 192,
+        "key_events": ["Regional Bank Earnings"]
+      },
+      {
+        "date": "2024-04-12",
+        "positive": 32,
+        "neutral": 43,
+        "negative": 25,
+        "total_inquiries": 203,
+        "key_events": ["Inflation Data Release"]
+      },
+      {
+        "date": "2024-04-13",
+        "positive": 36,
+        "neutral": 41,
+        "negative": 23,
+        "total_inquiries": 189,
+        "key_events": ["Congressional Hearing on Banking"]
+      },
+      {
+        "date": "2024-04-14",
+        "positive": 39,
+        "neutral": 39,
+        "negative": 22,
+        "total_inquiries": 167,
+        "key_events": ["Fed Chair Speech"]
+      },
+      {
+        "date": "2024-04-15",
+        "positive": 42,
+        "neutral": 38,
+        "negative": 20,
+        "total_inquiries": 247,
+        "key_events": ["Market Volatility", "CBDC Senate Hearing"]
+      }
+    ],
+    "weekly_summary": {
+      "current_week": {
+        "avg_positive": 37.4,
+        "avg_neutral": 40.9,
+        "avg_negative": 21.7,
+        "total_inquiries": 1332,
+        "trend": "improving"
+      },
+      "previous_week": {
+        "avg_positive": 34.2,
+        "avg_neutral": 43.1,
+        "avg_negative": 22.7,
+        "total_inquiries": 1198,
+        "trend": "stable"
+      }
+    }
+  },
+  "topic_evolution": {
+    "interest_rates": {
+      "week_1": { "mentions": 67, "sentiment": "neutral", "trend": "stable" },
+      "week_2": { "mentions": 72, "sentiment": "mixed", "trend": "rising" },
+      "week_3": { "mentions": 81, "sentiment": "negative", "trend": "rising" },
+      "week_4": { "mentions": 89, "sentiment": "mixed", "trend": "peak" }
+    },
+    "inflation_control": {
+      "week_1": { "mentions": 45, "sentiment": "negative", "trend": "stable" },
+      "week_2": { "mentions": 52, "sentiment": "negative", "trend": "rising" },
+      "week_3": { "mentions": 61, "sentiment": "mixed", "trend": "rising" },
+      "week_4": { "mentions": 67, "sentiment": "negative", "trend": "peak" }
+    },
+    "regional_banking": {
+      "week_1": { "mentions": 23, "sentiment": "negative", "trend": "emerging" },
+      "week_2": { "mentions": 31, "sentiment": "negative", "trend": "rising" },
+      "week_3": { "mentions": 37, "sentiment": "negative", "trend": "rising" },
+      "week_4": { "mentions": 45, "sentiment": "negative", "trend": "critical" }
+    },
+    "digital_currency": {
+      "week_1": { "mentions": 12, "sentiment": "positive", "trend": "emerging" },
+      "week_2": { "mentions": 16, "sentiment": "positive", "trend": "rising" },
+      "week_3": { "mentions": 19, "sentiment": "positive", "trend": "rising" },
+      "week_4": { "mentions": 23, "sentiment": "positive", "trend": "accelerating" }
+    }
+  },
+  "response_performance": {
+    "monthly_metrics": [
+      {
+        "month": "2024-01",
+        "avg_response_time": "3.2 hours",
+        "completion_rate": "89.5%",
+        "satisfaction_score": 3.8,
+        "total_inquiries": 1456
+      },
+      {
+        "month": "2024-02",
+        "avg_response_time": "2.8 hours",
+        "completion_rate": "91.2%",
+        "satisfaction_score": 4.0,
+        "total_inquiries": 1623
+      },
+      {
+        "month": "2024-03",
+        "avg_response_time": "2.4 hours",
+        "completion_rate": "93.1%",
+        "satisfaction_score": 4.2,
+        "total_inquiries": 1789
+      },
+      {
+        "month": "2024-04",
+        "avg_response_time": "2.1 hours",
+        "completion_rate": "94.2%",
+        "satisfaction_score": 4.3,
+        "total_inquiries": 1892
+      }
+    ],
+    "improvement_trends": {
+      "response_time": "-34% over 4 months",
+      "completion_rate": "+5.2% over 4 months",
+      "satisfaction": "+13% over 4 months",
+      "volume_growth": "+30% over 4 months"
+    }
+  },
+  "seasonal_patterns": {
+    "quarterly_focus": {
+      "Q1": {
+        "primary_topics": ["Budget Policy", "Economic Outlook", "Banking Regulation"],
+        "sentiment_trend": "cautious",
+        "inquiry_volume": "high"
+      },
+      "Q2": {
+        "primary_topics": ["Employment Data", "Inflation Monitoring", "Market Stability"],
+        "sentiment_trend": "mixed",
+        "inquiry_volume": "peak"
+      },
+      "Q3": {
+        "primary_topics": ["Banking Supervision", "Stress Tests", "Policy Implementation"],
+        "sentiment_trend": "analytical",
+        "inquiry_volume": "moderate"
+      },
+      "Q4": {
+        "primary_topics": ["Year-end Reviews", "Forward Guidance", "Policy Planning"],
+        "sentiment_trend": "forward-looking",
+        "inquiry_volume": "moderate"
+      }
+    },
+    "weekly_patterns": {
+      "monday": {
+        "peak_hours": ["09:00", "14:00"],
+        "primary_sources": ["congress", "media"],
+        "common_topics": ["policy announcements", "weekend news follow-up"]
+      },
+      "tuesday": {
+        "peak_hours": ["10:00", "15:00"],
+        "primary_sources": ["media", "academic"],
+        "common_topics": ["economic data", "research inquiries"]
+      },
+      "wednesday": {
+        "peak_hours": ["11:00", "16:00"],
+        "primary_sources": ["media", "public"],
+        "common_topics": ["FOMC meetings", "policy decisions"]
+      },
+      "thursday": {
+        "peak_hours": ["09:00", "13:00"],
+        "primary_sources": ["academic", "financial_institutions"],
+        "common_topics": ["research requests", "regulatory guidance"]
+      },
+      "friday": {
+        "peak_hours": ["10:00", "14:00"],
+        "primary_sources": ["public", "media"],
+        "common_topics": ["week wrap-up", "weekend preparation"]
+      }
+    }
+  },
+  "predictive_indicators": {
+    "leading_indicators": [
+      {
+        "indicator": "Congressional hearing schedule",
+        "impact": "high",
+        "lead_time": "3-5 days",
+        "typical_increase": "40-60%"
+      },
+      {
+        "indicator": "FOMC meeting announcements",
+        "impact": "very high",
+        "lead_time": "1-2 days",
+        "typical_increase": "80-120%"
+      },
+      {
+        "indicator": "Economic data releases",
+        "impact": "medium",
+        "lead_time": "1 day",
+        "typical_increase": "25-40%"
+      },
+      {
+        "indicator": "Market volatility spikes",
+        "impact": "high",
+        "lead_time": "same day",
+        "typical_increase": "50-80%"
+      }
+    ],
+    "correlation_analysis": {
+      "vix_vs_inquiries": 0.72,
+      "unemployment_vs_sentiment": -0.68,
+      "fed_rate_vs_volume": 0.81,
+      "market_performance_vs_tone": 0.59
+    }
+  },
+  "communication_effectiveness": {
+    "message_clarity_scores": {
+      "monetary_policy": 4.2,
+      "banking_supervision": 3.8,
+      "consumer_protection": 4.5,
+      "financial_stability": 3.9,
+      "payment_systems": 4.1
+    },
+    "response_satisfaction_by_source": {
+      "media": 4.1,
+      "congress": 4.4,
+      "public": 4.3,
+      "academic": 4.0,
+      "financial_institutions": 3.9,
+      "international": 4.2
+    },
+    "template_performance": {
+      "most_effective": [
+        {
+          "template": "monetary_policy_standard",
+          "satisfaction": 4.6,
+          "usage_frequency": "high",
+          "revision_date": "2024-03-15"
+        },
+        {
+          "template": "consumer_protection_simple",
+          "satisfaction": 4.5,
+          "usage_frequency": "medium",
+          "revision_date": "2024-02-28"
+        }
+      ],
+      "needs_improvement": [
+        {
+          "template": "banking_supervision_technical",
+          "satisfaction": 3.2,
+          "usage_frequency": "low",
+          "issues": ["too technical", "unclear language"]
+        }
+      ]
+    }
+  }
+}
+

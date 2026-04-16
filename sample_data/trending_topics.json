@@ -1,0 +1,261 @@
+
+
+{
+  "current_trends": [
+    {
+      "topic": "Interest Rate Policy",
+      "mentions": 89,
+      "trend_score": 8.7,
+      "sentiment_breakdown": {
+        "positive": 25,
+        "neutral": 42,
+        "negative": 22
+      },
+      "change_24h": "+12%",
+      "change_7d": "+8%",
+      "peak_time": "2024-04-15T14:30:00Z",
+      "related_keywords": ["federal funds rate", "rate hikes", "monetary policy", "FOMC"],
+      "geographic_concentration": ["Northeast", "West Coast"],
+      "source_breakdown": {
+        "media": 45,
+        "public": 28,
+        "congress": 12,
+        "academic": 4
+      }
+    },
+    {
+      "topic": "Inflation Control Measures",
+      "mentions": 67,
+      "trend_score": 7.8,
+      "sentiment_breakdown": {
+        "positive": 15,
+        "neutral": 28,
+        "negative": 24
+      },
+      "change_24h": "+8%",
+      "change_7d": "+15%",
+      "peak_time": "2024-04-15T16:45:00Z",
+      "related_keywords": ["inflation", "price stability", "PCE", "CPI"],
+      "geographic_concentration": ["Midwest", "Southeast"],
+      "source_breakdown": {
+        "media": 32,
+        "public": 25,
+        "congress": 8,
+        "academic": 2
+      }
+    },
+    {
+      "topic": "Regional Banking Stability",
+      "mentions": 45,
+      "trend_score": 6.9,
+      "sentiment_breakdown": {
+        "positive": 8,
+        "neutral": 18,
+        "negative": 19
+      },
+      "change_24h": "+22%",
+      "change_7d": "+35%",
+      "peak_time": "2024-04-15T17:20:00Z",
+      "related_keywords": ["regional banks", "bank failures", "deposit insurance", "systemic risk"],
+      "geographic_concentration": ["Southeast", "Southwest"],
+      "source_breakdown": {
+        "media": 28,
+        "public": 12,
+        "congress": 4,
+        "academic": 1
+      }
+    },
+    {
+      "topic": "Employment and Labor Markets",
+      "mentions": 38,
+      "trend_score": 6.2,
+      "sentiment_breakdown": {
+        "positive": 22,
+        "neutral": 12,
+        "negative": 4
+      },
+      "change_24h": "+3%",
+      "change_7d": "-2%",
+      "peak_time": "2024-04-15T10:15:00Z",
+      "related_keywords": ["unemployment", "job growth", "wage inflation", "labor force"],
+      "geographic_concentration": ["Midwest", "Northeast"],
+      "source_breakdown": {
+        "media": 18,
+        "public": 15,
+        "congress": 3,
+        "academic": 2
+      }
+    },
+    {
+      "topic": "FOMC Meeting Outcomes",
+      "mentions": 34,
+      "trend_score": 5.8,
+      "sentiment_breakdown": {
+        "positive": 12,
+        "neutral": 18,
+        "negative": 4
+      },
+      "change_24h": "-2%",
+      "change_7d": "+5%",
+      "peak_time": "2024-04-15T15:00:00Z",
+      "related_keywords": ["FOMC", "meeting minutes", "dot plot", "forward guidance"],
+      "geographic_concentration": ["Northeast", "West Coast"],
+      "source_breakdown": {
+        "media": 22,
+        "public": 8,
+        "congress": 3,
+        "academic": 1
+      }
+    },
+    {
+      "topic": "Central Bank Digital Currency",
+      "mentions": 23,
+      "trend_score": 4.9,
+      "sentiment_breakdown": {
+        "positive": 14,
+        "neutral": 7,
+        "negative": 2
+      },
+      "change_24h": "+18%",
+      "change_7d": "+25%",
+      "peak_time": "2024-04-15T13:30:00Z",
+      "related_keywords": ["CBDC", "digital dollar", "cryptocurrency", "payment systems"],
+      "geographic_concentration": ["West Coast", "Northeast"],
+      "source_breakdown": {
+        "media": 12,
+        "public": 6,
+        "congress": 4,
+        "academic": 1
+      }
+    },
+    {
+      "topic": "Housing Market Impact",
+      "mentions": 29,
+      "trend_score": 5.4,
+      "sentiment_breakdown": {
+        "positive": 5,
+        "neutral": 12,
+        "negative": 12
+      },
+      "change_24h": "+6%",
+      "change_7d": "+12%",
+      "peak_time": "2024-04-15T11:45:00Z",
+      "related_keywords": ["mortgage rates", "housing affordability", "real estate", "homebuyers"],
+      "geographic_concentration": ["West Coast", "Southeast"],
+      "source_breakdown": {
+        "media": 15,
+        "public": 11,
+        "congress": 2,
+        "academic": 1
+      }
+    },
+    {
+      "topic": "Climate Risk in Banking",
+      "mentions": 18,
+      "trend_score": 4.1,
+      "sentiment_breakdown": {
+        "positive": 8,
+        "neutral": 8,
+        "negative": 2
+      },
+      "change_24h": "+7%",
+      "change_7d": "+20%",
+      "peak_time": "2024-04-15T12:00:00Z",
+      "related_keywords": ["climate risk", "stress testing", "ESG", "green finance"],
+      "geographic_concentration": ["West Coast", "Northeast"],
+      "source_breakdown": {
+        "media": 8,
+        "public": 4,
+        "congress": 3,
+        "academic": 3
+      }
+    }
+  ],
+  "emerging_trends": [
+    {
+      "topic": "AI in Financial Services",
+      "mentions": 12,
+      "trend_score": 3.2,
+      "growth_rate": "+45%",
+      "time_to_trend": "2-3 days"
+    },
+    {
+      "topic": "Cross-Border Payment Systems",
+      "mentions": 8,
+      "trend_score": 2.8,
+      "growth_rate": "+38%",
+      "time_to_trend": "3-4 days"
+    },
+    {
+      "topic": "Cryptocurrency Regulation",
+      "mentions": 15,
+      "trend_score": 3.5,
+      "growth_rate": "+28%",
+      "time_to_trend": "1-2 days"
+    }
+  ],
+  "declining_trends": [
+    {
+      "topic": "Quantitative Easing",
+      "mentions": 6,
+      "trend_score": 1.8,
+      "decline_rate": "-25%",
+      "reason": "Policy shift focus"
+    },
+    {
+      "topic": "COVID Economic Impact",
+      "mentions": 4,
+      "trend_score": 1.2,
+      "decline_rate": "-40%",
+      "reason": "Economic recovery"
+    }
+  ],
+  "historical_comparison": {
+    "last_week": {
+      "top_topic": "Interest Rate Policy",
+      "mentions": 79,
+      "sentiment": "neutral"
+    },
+    "last_month": {
+      "top_topic": "Banking Supervision",
+      "mentions": 156,
+      "sentiment": "negative"
+    },
+    "last_quarter": {
+      "top_topic": "Inflation Control",
+      "mentions": 234,
+      "sentiment": "mixed"
+    }
+  },
+  "predictive_insights": [
+    {
+      "topic": "CBDC Implementation",
+      "predicted_growth": "+40%",
+      "timeframe": "next_week",
+      "confidence": 0.78,
+      "trigger_event": "Senate Banking Committee Hearing"
+    },
+    {
+      "topic": "Regional Bank Consolidation",
+      "predicted_growth": "+25%",
+      "timeframe": "next_month",
+      "confidence": 0.85,
+      "trigger_event": "Quarterly Earnings Reports"
+    }
+  ],
+  "sentiment_evolution": {
+    "interest_rates": {
+      "week_1": { "positive": 20, "neutral": 45, "negative": 35 },
+      "week_2": { "positive": 25, "neutral": 42, "negative": 33 },
+      "week_3": { "positive": 28, "neutral": 40, "negative": 32 },
+      "current": { "positive": 25, "neutral": 42, "negative": 22 }
+    },
+    "banking_stability": {
+      "week_1": { "positive": 15, "neutral": 25, "negative": 60 },
+      "week_2": { "positive": 18, "neutral": 30, "negative": 52 },
+      "week_3": { "positive": 20, "neutral": 35, "negative": 45 },
+      "current": { "positive": 18, "neutral": 40, "negative": 42 }
+    }
+  }
+}
+
